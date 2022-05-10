@@ -1,8 +1,12 @@
 ##install dependancies
-npm install
+
 ```
-## start app
+## npm install
 ```
-npm start
+
+##start app
+
+```
+## npm start
 ```
 
