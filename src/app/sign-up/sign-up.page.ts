@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { FirebaseAuthService } from '../firebase-auth.service';
 import { Subscription } from 'rxjs';
+import { Neo4jAuraService } from '../neo4j-aura.service';
 
 @Component({
   selector: 'app-sign-up',
@@ -30,7 +31,8 @@ export class SignUpPage {
     public angularFire: AngularFireAuth,
     public router: Router,
     private ngZone: NgZone,
-    private authService: FirebaseAuthService
+    private authService: FirebaseAuthService,
+    private neo4jDb: Neo4jAuraService
   ) {
     this.signUpForm = new FormGroup({
       'email': new FormControl('', Validators.compose([
@@ -45,13 +47,13 @@ export class SignUpPage {
     // Get firebase authentication redirect result invoken when using signInWithRedirect()
     // signInWithRedirect() is only used when client is in web but not desktop
     this.authRedirectResult = this.authService.getRedirectResult()
-    .subscribe(result => {
-      if (result.user) {
-        this.redirectLoggedUserToProfilePage();
-      } else if (result.error) {
-        this.submitError = result.error;
-      }
-    });
+      .subscribe(result => {
+        if (result.user) {
+          this.redirectLoggedUserToProfilePage();
+        } else if (result.error) {
+          this.submitError = result.error;
+        }
+      });
   }
 
   // Once the auth provider finished the authentication flow, and the auth redirect completes,
@@ -66,60 +68,84 @@ export class SignUpPage {
 
   signUpWithEmail() {
     this.authService.signUpWithEmail(this.signUpForm.value['email'], this.signUpForm.value['password'])
-    .then(user => {
-      // navigate to user profile
-      this.redirectLoggedUserToProfilePage();
-    })
-    .catch(error => {
-      this.submitError = error.message;
-    });
+      .then(res => {
+        const user = res.user;
+        console.log(user);
+        console.log(user.email);
+
+        const newUser: UserModel = {
+          userId: user.uid,
+          email: user.email,
+          createdAt: new Date().toDateString(),
+          userName: user.displayName || user.email,
+          avatarUrl: user.photoURL || '',
+        };
+
+        this.neo4jDb.createUser(newUser);
+
+        // navigate to user profile
+        this.redirectLoggedUserToProfilePage();
+      })
+      .catch(error => {
+        this.submitError = error.message;
+      });
   }
 
   facebookSignUp() {
     this.authService.signInWithFacebook()
-    .then((result: any) => {
-      if (result.additionalUserInfo) {
-        this.authService.setProviderAdditionalInfo(result.additionalUserInfo.profile);
-      }
-      // This gives you a Facebook Access Token. You can use it to access the Facebook API.
-      // const token = result.credential.accessToken;
-      // The signed-in user info is in result.user;
-      this.redirectLoggedUserToProfilePage();
-    }).catch((error) => {
-      // Handle Errors here.
-      console.log(error);
-    });
+      .then((result: any) => {
+        if (result.additionalUserInfo) {
+          this.authService.setProviderAdditionalInfo(result.additionalUserInfo.profile);
+        }
+        // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+        // const token = result.credential.accessToken;
+        // The signed-in user info is in result.user;
+        this.redirectLoggedUserToProfilePage();
+      }).catch((error) => {
+        // Handle Errors here.
+        console.log(error);
+      });
   }
 
   googleSignUp() {
     this.authService.signInWithGoogle()
-    .then((result: any) => {
-      if (result.additionalUserInfo) {
-        this.authService.setProviderAdditionalInfo(result.additionalUserInfo.profile);
-      }
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      // const token = result.credential.accessToken;
-      // The signed-in user info is in result.user;
-      this.redirectLoggedUserToProfilePage();
-    }).catch((error) => {
-      // Handle Errors here.
-      console.log(error);
-    });
+      .then((result: any) => {
+        if (result.additionalUserInfo) {
+          this.authService.setProviderAdditionalInfo(result.additionalUserInfo.profile);
+        }
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        // const token = result.credential.accessToken;
+        // The signed-in user info is in result.user;
+        const user = result.user;
+        const newUser: UserModel = {
+          userId: user.uid,
+          email: user.email,
+          createdAt: new Date().toDateString(),
+          userName: user.displayName || 'Anon',
+          avatarUrl: user.photoURL,
+        };
+
+        this.neo4jDb.createUser(newUser);
+        this.redirectLoggedUserToProfilePage();
+      }).catch((error) => {
+        // Handle Errors here.
+        console.log(error);
+      });
   }
 
   twitterSignUp() {
     this.authService.signInWithTwitter()
-    .then((result: any) => {
-      if (result.additionalUserInfo) {
-        this.authService.setProviderAdditionalInfo(result.additionalUserInfo.profile);
-      }
-      // This gives you a Twitter Access Token. You can use it to access the Twitter API.
-      // const token = result.credential.accessToken;
-      // The signed-in user info is in result.user;
-      this.redirectLoggedUserToProfilePage();
-    }).catch((error) => {
-      // Handle Errors here.
-      console.log(error);
-    });
+      .then((result: any) => {
+        if (result.additionalUserInfo) {
+          this.authService.setProviderAdditionalInfo(result.additionalUserInfo.profile);
+        }
+        // This gives you a Twitter Access Token. You can use it to access the Twitter API.
+        // const token = result.credential.accessToken;
+        // The signed-in user info is in result.user;
+        this.redirectLoggedUserToProfilePage();
+      }).catch((error) => {
+        // Handle Errors here.
+        console.log(error);
+      });
   }
 }
