@@ -1,14 +1,13 @@
-import { Injectable } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
-import { Observable, Subject, from } from 'rxjs';
-import { Platform } from '@ionic/angular';
-import { User, auth } from 'firebase/app';
-import { ProfileModel } from './profile/profile.model';
-import { filter, map, take } from 'rxjs/operators';
+import { Injectable } from "@angular/core";
+import { AngularFireAuth } from "@angular/fire/auth";
+import { Observable, Subject, from } from "rxjs";
+import { Platform } from "@ionic/angular";
+import { User, auth } from "firebase/app";
+import { ProfileModel } from "./profile/profile.model";
+import { filter, map, take } from "rxjs/operators";
 
 @Injectable()
 export class FirebaseAuthService {
-
   currentUser: User;
   userProviderAdditionalInfo: any;
   redirectResult: Subject<any> = new Subject<any>();
@@ -28,17 +27,19 @@ export class FirebaseAuthService {
     });
 
     // when using signInWithRedirect, this listens for the redirect results
-    this.angularFireAuth.getRedirectResult()
-      .then((result) => {
+    this.angularFireAuth.getRedirectResult().then(
+      (result) => {
         // result.credential.accessToken gives you the Provider Access Token. You can use it to access the Provider API.
         if (result.user) {
           this.setProviderAdditionalInfo(result.additionalUserInfo.profile);
           this.currentUser = result.user;
           this.redirectResult.next(result);
         }
-      }, (error) => {
+      },
+      (error) => {
         this.redirectResult.next({ error: error.code });
-      });
+      }
+    );
   }
 
   getRedirectResult(): Observable<any> {
@@ -50,14 +51,13 @@ export class FirebaseAuthService {
   }
 
   public getProfileDataSource() {
-    return this.angularFireAuth.user
-      .pipe(
-        filter((user: User) => user != null),
-        map((user: User) => {
-          return this.getProfileData();
-        }),
-        take(1) // this.angularFireAuth.user never completes so we use take(1) in order to complete after the first value is emitted
-      );
+    return this.angularFireAuth.user.pipe(
+      filter((user: User) => user != null),
+      map((user: User) => {
+        return this.getProfileData();
+      }),
+      take(1) // this.angularFireAuth.user never completes so we use take(1) in order to complete after the first value is emitted
+    );
   }
 
   public getProfileData() {
@@ -69,27 +69,33 @@ export class FirebaseAuthService {
 
     // Default imgs are too small and our app needs a bigger image
     switch (providerData.providerId) {
-      case 'facebook.com':
-        userModel.image = providerData.photoURL + '?height=400';
+      case "facebook.com":
+        userModel.image = providerData.photoURL + "?height=400";
         break;
-      case 'password':
-        userModel.image = 'https://s3-us-west-2.amazonaws.com/ionicthemes/otros/avatar-placeholder.png';
+      case "password":
+        userModel.image =
+          "https://s3-us-west-2.amazonaws.com/ionicthemes/otros/avatar-placeholder.png";
         break;
-      case 'twitter.com':
-        userModel.image = providerData.photoURL.replace('_normal', '_400x400');
+      case "twitter.com":
+        userModel.image = providerData.photoURL.replace("_normal", "_400x400");
         break;
-      case 'google.com':
-        userModel.image = providerData.photoURL.split('=')[0];
+      case "google.com":
+        userModel.image = providerData.photoURL.split("=")[0];
         break;
       default:
         userModel.image = providerData.photoURL;
     }
-    userModel.name = providerData.name || providerData.displayName || 'What\'s your name?';
-    userModel.role = 'How would you describe yourself?';
-    userModel.description = providerData.description || 'Description ...';
-    userModel.phoneNumber = providerData.phoneNumber || 'Number ...';
-    userModel.email = providerData.email || 'Email ...';
-    userModel.provider = (providerData.providerId !== 'password') ? providerData.providerId : 'Credentials';
+    userModel.name =
+      providerData.name || providerData.displayName || "What's your name?";
+    userModel.role = "How would you describe yourself?";
+    userModel.description = providerData.description || "Description ...";
+    userModel.phoneNumber = providerData.phoneNumber || "Number ...";
+    userModel.email = providerData.email || "Email ...";
+    userModel.provider =
+      providerData.providerId !== "password"
+        ? providerData.providerId
+        : "Credentials";
+    userModel.uid = this.currentUser.uid;
 
     return userModel;
   }
@@ -98,11 +104,17 @@ export class FirebaseAuthService {
     return from(this.angularFireAuth.signOut());
   }
 
-  signInWithEmail(email: string, password: string): Promise<auth.UserCredential> {
+  signInWithEmail(
+    email: string,
+    password: string
+  ): Promise<auth.UserCredential> {
     return this.angularFireAuth.signInWithEmailAndPassword(email, password);
   }
 
-  signUpWithEmail(email: string, password: string): Promise<auth.UserCredential> {
+  signUpWithEmail(
+    email: string,
+    password: string
+  ): Promise<auth.UserCredential> {
     return this.angularFireAuth.createUserWithEmailAndPassword(email, password);
   }
 
@@ -111,12 +123,12 @@ export class FirebaseAuthService {
 
     // add any permission scope you need
     if (scopes) {
-      scopes.forEach(scope => {
+      scopes.forEach((scope) => {
         provider.addScope(scope);
       });
     }
 
-    if (this.platform.is('desktop')) {
+    if (this.platform.is("desktop")) {
       return this.angularFireAuth.signInWithPopup(provider);
     } else {
       // web but not desktop, for example mobile PWA
@@ -132,7 +144,7 @@ export class FirebaseAuthService {
 
   signInWithGoogle() {
     const provider = new auth.GoogleAuthProvider();
-    const scopes = ['profile', 'email'];
+    const scopes = ["profile", "email"];
     return this.socialSignIn(provider.providerId, scopes);
   }
 

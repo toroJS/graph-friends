@@ -1,0 +1,116 @@
+import { Injectable } from "@angular/core";
+import * as moment from "moment";
+import { Subject } from "rxjs";
+import { FirebaseAuthService } from "../firebase-auth.service";
+import Helper from "../helpers/helpers";
+import {
+  DBEventModel,
+  DBUserModel,
+  EventModel,
+  UserModel,
+} from "../models/types";
+import { Neo4jAuraService } from "../neo4j-aura.service";
+import { v4 as uuidv4 } from "uuid";
+import { names } from "../helpers/mockData";
+import { ProfileModel } from "../profile/profile.model";
+
+@Injectable({ providedIn: "root" })
+export class UserService {
+  public user$ = new Subject<UserModel>();
+  public conections$ = new Subject<UserModel[]>();
+
+  constructor(
+    private authService: FirebaseAuthService,
+    private db: Neo4jAuraService
+  ) {
+    this.authService
+      .getProfileDataSource()
+      .subscribe(async (fireUser: ProfileModel) => {
+        //fireUser is the Auth User from Firebase
+        //user is the saved user in Neo4j
+        const user = await this.db.getUserById(fireUser.uid);
+        const userState = {
+          userId: fireUser.uid,
+          createdAt: user.createdAt,
+          userName: user.userName || fireUser.name,
+          email: user.email || fireUser.email,
+          avatarUrl: user.avatarUrl || fireUser.image,
+          phoneNumber: user.phoneNumber || fireUser.phoneNumber,
+        };
+        this.user$.next(userState);
+      });
+  }
+
+  public async getAllConections(userId: string) {
+    const conections = await this.db.getAllConections(userId);
+    conections.map(async (connection) => {
+      connection.eventsAttended = await this.db.getAttendanceOfConnection(
+        userId,
+        connection.userId
+      );
+      connection.connectionState = this.getConnectionState(
+        connection.intFreq,
+        connection.eventsAttended[0]?.eventDate || connection.friendSince
+      );
+    });
+    this.conections$.next(conections);
+  }
+
+  public getConnectionState(intFreq: number, lastEventDate: moment.Moment) {
+    const now = moment();
+    const diff = Helper.timeDifference(now.valueOf(), lastEventDate.valueOf());
+    const connectionState = Helper.calculateConnectionState(diff, intFreq);
+    return connectionState;
+  }
+
+  ///Mock Generators
+  public generateDummyUser(): DBUserModel {
+    return {
+      avatarUrl: uuidv4(),
+      createdAt: this.randomDate(
+        new Date(2021, 5, 1),
+        new Date(2022, 4, 1)
+      ).toDateString(),
+      email: this.randomEmail(),
+      userId: uuidv4(),
+      userName: this.generateName(),
+    };
+  }
+
+  public generateEvent(): DBEventModel {
+    return {
+      eventId: uuidv4(),
+      eventType: this.pickRandom(["sport", "eating", "drinking"]),
+      eventDate: this.randomDate(
+        new Date(2022, 4, 1),
+        new Date()
+      ).toDateString(),
+      eventName: this.generateName() + "Big Event",
+      eventDescription: "no description",
+    };
+  }
+
+  generateName() {
+    const name = this.pickRandom(names);
+    return name;
+  }
+
+  pickRandom(list) {
+    return list[Math.floor(Math.random() * list.length)];
+  }
+
+  randomDate(start, end) {
+    return new Date(
+      start.getTime() + Math.random() * (end.getTime() - start.getTime())
+    );
+  }
+
+  randomEmail() {
+    const chars = "abcdefghijklmnopqrstuvwxyz1234567890";
+    let string = "";
+    for (var ii = 0; ii < 15; ii++) {
+      string += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return string + "@gmail.com";
+  }
+}

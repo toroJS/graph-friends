@@ -6,4 +6,5 @@ export class ProfileModel {
   email: string;
   provider: string;
   phoneNumber: string;
+  uid: string;
 }

@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import * as moment from "moment";
 
 // import { AngularFireAuth } from '@angular/fire/auth';
 // import { Observable, Subject, from } from 'rxjs';
@@ -7,6 +8,8 @@ import { Injectable } from "@angular/core";
 // import { ProfileModel } from './profile/profile.model';
 // import { filter, map, take } from 'rxjs/operators';
 import neo4j from "neo4j-driver";
+import Helper from "./helpers/helpers";
+import { DBEventModel, EventModel, UserModel } from "./models/types";
 
 @Injectable({ providedIn: "root" })
 export class Neo4jAuraService {
@@ -87,23 +90,28 @@ export class Neo4jAuraService {
   }
 
   public async getAllConections(userId) {
-    const getAllConectionsQuery = `MATCH (p:Person {userId:$userId})-[rel:BEFRIENDED]->(f:Person) RETURN rel.intFreq AS intFreq, f AS conections`;
+    const getAllConectionsQuery = `MATCH (p:Person {userId:$userId})-[rel:BEFRIENDED]->(f:Person) RETURN rel.intFreq AS intFreq, rel.since AS since, f AS conections`;
     //MATCH (p:Person {userId:'rBM5YviVvBTYlno9U363bDuABpk1'})-[rel:BEFRIENDED]->(a:Person) RETURN rel.intFreq AS freq, p AS person
-    const params = {userId: userId};
+    const params = { userId: userId };
 
     const driver = this.getDriver();
     const session = driver.session();
 
     try {
-   
       const readResult = await session.readTransaction((tx) =>
         tx.run(getAllConectionsQuery, params)
       );
-      const results : UserModel [] = [] ;
+      const results: UserModel[] = [];
       readResult.records.forEach((record) => {
-          //console.log(Date.parse((record.get("conections").properties).createdAt));
-          
-        results.push({...record.get("conections").properties, ... {intFreq: record.get("intFreq").toNumber()}});
+        //console.log(Date.parse((record.get("conections").properties).createdAt));
+
+        results.push({
+          ...record.get("conections").properties,
+          ...{
+            intFreq: record.get("intFreq"),
+            friendSince: moment(record.get("since")),
+          },
+        });
       });
       return results;
     } catch (error) {
@@ -125,7 +133,7 @@ export class Neo4jAuraService {
     this.write(changeIntFreqQuery, params);
   }
 
-  public async createEvent(userId: string, event: EventModel) {
+  public async createEvent(userId: string, event: DBEventModel) {
     console.log("Create Event");
     const createEventQuery = ` MATCH(p: Person { userId:$userId }) CREATE(e:Event {eventId:$eventId, eventType:$eventType, eventDate:$eventDate, eventName:$eventName, eventDescription:$eventDescription}) MERGE(p)-[:CREATED]->(e)
         `;
@@ -133,29 +141,32 @@ export class Neo4jAuraService {
     this.write(createEventQuery, params);
   }
 
-  
-
   public async addAttendance(userId: string, eventId: string) {
     const addAttendanceQuery = `MATCH(e:Event {eventId: $eventId}) MATCH (p:Person {userId: $userId }) MERGE (p)-[:ATTENDED]->(e)`;
     const params = { userId: userId, eventId: eventId };
     this.write(addAttendanceQuery, params);
   }
 
-  public async getAttendanceOfConnection(userId: string, conectionUserId: string) {
-    const getAttendanceOfConnectionQuery = `MATCH (p:Person {userId:$conectionUserId})-[:ATTENDED]->(e) MATCH (d:Person {userId:$userId})-[:CREATED]->(e)  RETURN e AS event` 
-    const params = {conectionUserId: conectionUserId, userId: userId};
+  public async getAttendanceOfConnection(
+    userId: string,
+    conectionUserId: string
+  ) {
+    const getAttendanceOfConnectionQuery = `MATCH (p:Person {userId:$conectionUserId})-[:ATTENDED]->(e) MATCH (d:Person {userId:$userId})-[:CREATED]->(e)  RETURN e AS event`;
+    const params = { conectionUserId: conectionUserId, userId: userId };
     const driver = this.getDriver();
     const session = driver.session();
     try {
-   
       const readResult = await session.readTransaction((tx) =>
         tx.run(getAttendanceOfConnectionQuery, params)
       );
-      const results : EventModel [] = [] ;
+      const results: EventModel[] = [];
       readResult.records.forEach((record) => {
+        const event = record.get("event").properties;
+        event.eventDate = moment(event.eventDate);
         results.push(record.get("event").properties);
       });
-      return results;
+      const sortedResults = Helper.sortByDate(results, "eventDate", "desc");
+      return sortedResults;
     } catch (error) {
       console.error("Something went wrong: ", error);
     } finally {
@@ -163,8 +174,6 @@ export class Neo4jAuraService {
     }
     await driver.close();
   }
-
-
 
   public async getUserById(userId: string) {
     console.log("Get User by Id");
@@ -180,7 +189,7 @@ export class Neo4jAuraService {
       readResult.records.forEach((record) => {
         results.push(record.get("user"));
       });
-      return results[0].properties as UserModel;
+      return (results[0]?.properties as UserModel) || undefined;
     } catch (error) {
       console.error("Something went wrong: ", error);
     } finally {
