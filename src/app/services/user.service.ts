@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import * as moment from "moment";
-import { Subject } from "rxjs";
+import { BehaviorSubject, Subject } from "rxjs";
 import { FirebaseAuthService } from "../firebase-auth.service";
 import Helper from "../helpers/helpers";
 import {
@@ -16,8 +16,9 @@ import { ProfileModel } from "../profile/profile.model";
 
 @Injectable({ providedIn: "root" })
 export class UserService {
-  public user$ = new Subject<UserModel>();
-  public conections$ = new Subject<UserModel[]>();
+  public user$ = new BehaviorSubject<UserModel>(null);
+  public conections$ = new BehaviorSubject<UserModel[]>(null);
+  public selectedConnectionId$ = new BehaviorSubject<string>(null);
 
   constructor(
     private authService: FirebaseAuthService,
@@ -37,6 +38,8 @@ export class UserService {
           avatarUrl: user.avatarUrl || fireUser.image,
           phoneNumber: user.phoneNumber || fireUser.phoneNumber,
         };
+        console.log("emit user");
+
         this.user$.next(userState);
       });
   }
@@ -61,6 +64,16 @@ export class UserService {
     const diff = Helper.timeDifference(now.valueOf(), lastEventDate.valueOf());
     const connectionState = Helper.calculateConnectionState(diff, intFreq);
     return connectionState;
+  }
+
+  public selectConnection(connectionUserId: string) {
+    //console.log("triger selection");
+
+    this.selectedConnectionId$.next(connectionUserId);
+  }
+
+  public unselectConnection() {
+    this.selectedConnectionId$.complete();
   }
 
   ///Mock Generators

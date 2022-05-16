@@ -80,14 +80,39 @@ export class Neo4jAuraService {
   public async addConection(userId1: string, userId2: string, intFreq: number) {
     const createConectionQuery = `
         MATCH (p1:Person {userId:$userId1}) MATCH (p2:Person{userId:$userId2 }) MERGE (p1)-[:BEFRIENDED {intFreq:$intFreq, since:$since}]->(p2)`;
+    //replace random date for Date() after testing
     const params = {
       userId1: userId1,
       userId2: userId2,
-      since: new Date().toDateString(),
+      since: new Date(),
       intFreq: intFreq,
     };
     this.write(createConectionQuery, params);
   }
+  //remove testing only--------------------------
+  randomDate(start, end) {
+    return new Date(
+      start.getTime() + Math.random() * (end.getTime() - start.getTime())
+    );
+  }
+
+  public async addConectionForTestOnly(
+    userId1: string,
+    userId2: string,
+    intFreq: number
+  ) {
+    const createConectionQuery = `
+        MATCH (p1:Person {userId:$userId1}) MATCH (p2:Person{userId:$userId2 }) MERGE (p1)-[:BEFRIENDED {intFreq:$intFreq, since:$since}]->(p2)`;
+    //replace random date for Date() after testing
+    const params = {
+      userId1: userId1,
+      userId2: userId2,
+      since: this.randomDate(new Date(2022, 4, 1), new Date()).toDateString(),
+      intFreq: intFreq,
+    };
+    this.write(createConectionQuery, params);
+  }
+  ////--------------------------------------------------------------
 
   public async getAllConections(userId) {
     const getAllConectionsQuery = `MATCH (p:Person {userId:$userId})-[rel:BEFRIENDED]->(f:Person) RETURN rel.intFreq AS intFreq, rel.since AS since, f AS conections`;
@@ -165,7 +190,9 @@ export class Neo4jAuraService {
         event.eventDate = moment(event.eventDate);
         results.push(record.get("event").properties);
       });
+
       const sortedResults = Helper.sortByDate(results, "eventDate", "desc");
+
       return sortedResults;
     } catch (error) {
       console.error("Something went wrong: ", error);
@@ -176,7 +203,7 @@ export class Neo4jAuraService {
   }
 
   public async getUserById(userId: string) {
-    console.log("Get User by Id");
+    //console.log("Get User by Id");
     const driver = this.getDriver();
     const session = driver.session();
     try {

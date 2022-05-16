@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <!-- <ion-back-button defaultHref="sign-in"></ion-back-button> -->
     </ion-buttons>
-    <ion-title>Dashboard</ion-title>
+    <ion-title>Connections</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -14,7 +14,7 @@
       class="xc"
       *ngFor="let connection of conections$ |async"
     >
-      <div>
+      <div (click)="goToConnection(connection.userId)">
         <span>{{connection.userName}}</span>
         <img
           *ngIf="connection.connectionState"

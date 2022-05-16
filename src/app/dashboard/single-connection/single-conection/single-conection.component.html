@@ -1,0 +1,58 @@
+<ng-container *ngIf="selectedConnection">
+  <ion-header class="ion-no-border">
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button></ion-back-button>
+      </ion-buttons>
+      <ion-title>{{ selectedConnection.userName }}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content class="connection-content">
+    <ion-card>
+      <ion-item>
+        <ion-label> Events </ion-label>
+        <ion-button
+          [fill]="'clear'"
+          *ngIf="selectedConnection?.eventsAttended?.length > 3"
+          (click)="showFullEventList = !showFullEventList"
+          >{{ showFullEventList ? "Show Latest" : "Show All" }}</ion-button
+        >
+      </ion-item>
+      <ion-list>
+        <ion-item
+          *ngFor="
+            let event of showFullEventList
+              ? selectedConnection.eventsAttended
+              : (selectedConnection.eventsAttended | slice: 0:3)
+          "
+        >
+          <ion-avatar slot="start">
+            <img src="./avatar-finn.png" />
+          </ion-avatar>
+          <ion-label>
+            <h3>{{ event.eventName }}</h3>
+            <p>{{ event.eventType }}</p>
+          </ion-label>
+          <ion-badge color="primary" slot="end">{{
+            event.eventDate.format("DD.M.YY")
+          }}</ion-badge>
+        </ion-item>
+        <ion-item *ngIf="selectedConnection?.eventsAttended?.length < 1">
+          No Events yet. Maybe you could plan something with this person.
+        </ion-item>
+      </ion-list>
+      <ion-card-content> </ion-card-content>
+    </ion-card>
+    <ion-card>
+      <ion-item>
+        <ion-label>Activity types</ion-label>
+      </ion-item>
+      <ion-card-content>
+        <app-polar-chart
+          *ngIf="selectedConnection?.eventsAttended"
+          [events]="selectedConnection.eventsAttended"
+        ></app-polar-chart>
+      </ion-card-content>
+    </ion-card>
+  </ion-content>
+</ng-container>
