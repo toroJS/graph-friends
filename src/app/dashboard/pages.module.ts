@@ -12,8 +12,9 @@ import {
   AngularFireAuthGuard,
   redirectUnauthorizedTo,
 } from "@angular/fire/auth-guard";
-import { SingleConectionComponent } from "./single-connection/single-conection/single-conection.component";
+import { SingleConectionComponent } from "./single-connection/single-conection.component";
 import { ChartsModule } from "../charts/charts.module";
+import { ActivityComponent } from "./activity/activity.component";
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(["sign-in"]);
 
@@ -22,6 +23,14 @@ const routes: Routes = [
     path: "dashboard",
     component: DashboardPage,
     canActivate: [AngularFireAuthGuard],
+    data: { authGuardPipe: redirectUnauthorizedToLogin },
+    resolve: {
+      data: DashboardPageResolver,
+    },
+  },
+  {
+    path: "activity",
+    component: ActivityComponent,
     data: { authGuardPipe: redirectUnauthorizedToLogin },
     resolve: {
       data: DashboardPageResolver,
@@ -46,7 +55,7 @@ const routes: Routes = [
     ChartsModule,
     RouterModule.forChild(routes),
   ],
-  declarations: [DashboardPage, SingleConectionComponent],
+  declarations: [DashboardPage, SingleConectionComponent, ActivityComponent],
   providers: [DashboardPageResolver],
 })
 export class PagesModule {}

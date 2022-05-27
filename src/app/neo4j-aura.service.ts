@@ -172,6 +172,32 @@ export class Neo4jAuraService {
     this.write(addAttendanceQuery, params);
   }
 
+  public async getAllEventsCreatedByUserId(userId: string) {
+    const driver = this.getDriver();
+    const session = driver.session();
+
+    try {
+      const readQuery = `MATCH (p:Person {userId : $userId})-[:CREATED]->(e:Event) RETURN e AS event`;
+      const readResult = await session.readTransaction((tx) =>
+        tx.run(readQuery, { userId: userId })
+      );
+      const results = [];
+      readResult.records.forEach((record) => {
+        const event = record.get("event").properties;
+        event.eventDate = moment(event.eventDate);
+        results.push(event as EventModel);
+      });
+      const sortedResults = Helper.sortByDate(results, "eventDate", "desc");
+
+      return sortedResults || undefined;
+    } catch (error) {
+      console.error("Something went wrong: ", error);
+    } finally {
+      await session.close();
+    }
+    await driver.close();
+  }
+
   public async getAttendanceOfConnection(
     userId: string,
     conectionUserId: string

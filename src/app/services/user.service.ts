@@ -18,6 +18,7 @@ import { ProfileModel } from "../profile/profile.model";
 export class UserService {
   public user$ = new BehaviorSubject<UserModel>(null);
   public conections$ = new BehaviorSubject<UserModel[]>(null);
+  public createdEvents$ = new BehaviorSubject<EventModel[]>(null);
   public selectedConnectionId$ = new BehaviorSubject<string>(null);
 
   constructor(
@@ -57,6 +58,11 @@ export class UserService {
       );
     });
     this.conections$.next(conections);
+  }
+
+  public async getAllCreatedEvents(userId: string) {
+    const events = await this.db.getAllEventsCreatedByUserId(userId);
+    this.createdEvents$.next(events);
   }
 
   public getConnectionState(intFreq: number, lastEventDate: moment.Moment) {

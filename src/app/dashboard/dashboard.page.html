@@ -26,9 +26,8 @@
           [src]="'../../assets/health-indicators/'+connection.connectionState+'.svg'"
           alt="connection-health-indicators"
         />
-        <span> {{connection.intFreq}}</span>
-        <span> {{connection.connectionState}}</span>
-        <span> {{connection.friendSince.format('L')}}</span>
+        <span>IF: {{connection.intFreq}}</span>
+        <span>Since: {{connection.friendSince.format('L')}}</span>
       </div>
     </div>
   </div>

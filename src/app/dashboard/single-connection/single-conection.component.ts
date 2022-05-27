@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { ActivatedRoute, Params, Router } from "@angular/router";
-import { FirebaseAuthService } from "../../../firebase-auth.service";
-import { Neo4jAuraService } from "../../../neo4j-aura.service";
-import { UserService } from "../../../services/user.service";
+import { FirebaseAuthService } from "../../firebase-auth.service";
+import { Neo4jAuraService } from "../../neo4j-aura.service";
+import { UserService } from "../../services/user.service";
 import { EMPTY, iif, Observable, of, Subject } from "rxjs";
 import {
   filter,
@@ -13,7 +13,7 @@ import {
   take,
   takeUntil,
 } from "rxjs/operators";
-import { UserModel } from "../../../models/types";
+import { UserModel } from "../../models/types";
 import { Location } from "@angular/common";
 
 @Component({

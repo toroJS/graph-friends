@@ -40,8 +40,6 @@ export class PolarChartComponent implements AfterViewInit {
       }
       data.push(count);
     }
-    console.log(labels);
-    console.log(data);
 
     if (labels.length < 1) labels.push("No Data");
     if (data.length < 1) data.push(1);
