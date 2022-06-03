@@ -1,4 +1,5 @@
 import * as moment from "moment";
+import { ConnectionState } from "../models/types";
 
 export default class Helper {
   static doSomething(val: string) {
@@ -29,39 +30,30 @@ export default class Helper {
 
     var secondsDifference = Math.floor(difference / 1000);
 
-    // console.log(
-    //   "difference = " +
-    //     daysDifference +
-    //     " day/s " +
-    //     hoursDifference +
-    //     " hour/s " +
-    //     minutesDifference +
-    //     " minute/s " +
-    //     secondsDifference +
-    //     " second/s "
-    // );
     return daysDifference;
   }
 
   public static calculateConnectionState(diff: number, intFreq: number) {
     const delay = diff - intFreq;
-    let state = "";
+    let state: ConnectionState;
     if (delay <= 0) {
-      state = "state1";
-      //console.log("state 1: On Point");
+      state = ConnectionState.State1;
+      console.log("state 1: On Point");
     } else if (delay > 0 && delay <= 3) {
-      state = "state2";
-      //console.log("state 2: 1 - 3 days");
+      state = ConnectionState.State2;
+      console.log("state 2: 1 - 3 days");
     } else if (delay > 3 && delay <= 6) {
-      state = "state3";
-      //console.log("state 3: 4 - 6 days");
+      state = ConnectionState.State3;
+      console.log("state 3: 4 - 6 days");
     } else if (delay > 6 && delay <= 8) {
-      state = "state4";
-      //console.log("state 4: 7 - 8 days");
+      state = ConnectionState.State4;
+      console.log("state 4: 7 - 8 days");
     } else if (delay > 8) {
-      state = "state5";
-      //console.log("state 4: more than 8  days");
+      state = ConnectionState.State5;
+      console.log("state 4: more than 8  days");
     }
+    console.log(state);
+
     return state;
   }
 }

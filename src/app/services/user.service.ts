@@ -4,6 +4,7 @@ import { BehaviorSubject, Subject } from "rxjs";
 import { FirebaseAuthService } from "../firebase-auth.service";
 import Helper from "../helpers/helpers";
 import {
+  avatarState,
   DBEventModel,
   DBUserModel,
   EventModel,
@@ -56,6 +57,9 @@ export class UserService {
         connection.intFreq,
         connection.eventsAttended[0]?.eventDate || connection.friendSince
       );
+      connection.connectionStateEmogi = avatarState.get(
+        connection.connectionState
+      );
     });
     this.conections$.next(conections);
   }
@@ -101,7 +105,7 @@ export class UserService {
       eventId: uuidv4(),
       eventType: this.pickRandom(["sport", "eating", "drinking"]),
       eventDate: this.randomDate(
-        new Date(2022, 4, 1),
+        new Date(2022, 3, 1),
         new Date()
       ).toDateString(),
       eventName: this.generateName() + "Big Event",

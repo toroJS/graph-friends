@@ -1,6 +1,6 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 import { IonicModule } from "@ionic/angular";
 
@@ -15,6 +15,9 @@ import {
 import { SingleConectionComponent } from "./single-connection/single-conection.component";
 import { ChartsModule } from "../charts/charts.module";
 import { ActivityComponent } from "./activity/activity.component";
+import { ProfileComponent } from "./profile/profile.component";
+import { CreateEventModalComponent } from "./modals/create-event-modal/create-event-modal.component";
+import { CreateConnectionModalComponent } from "./modals/create-connection-modal/create-connection-modal.component";
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(["sign-in"]);
 
@@ -37,6 +40,14 @@ const routes: Routes = [
     },
   },
   {
+    path: "profile",
+    component: ProfileComponent,
+    data: { authGuardPipe: redirectUnauthorizedToLogin },
+    resolve: {
+      data: DashboardPageResolver,
+    },
+  },
+  {
     path: "connection/:connectionUserId",
     component: SingleConectionComponent,
     canActivate: [AngularFireAuthGuard],
@@ -53,9 +64,17 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     ChartsModule,
+    ReactiveFormsModule,
     RouterModule.forChild(routes),
   ],
-  declarations: [DashboardPage, SingleConectionComponent, ActivityComponent],
+  declarations: [
+    DashboardPage,
+    SingleConectionComponent,
+    ActivityComponent,
+    ProfileComponent,
+    CreateEventModalComponent,
+    CreateConnectionModalComponent,
+  ],
   providers: [DashboardPageResolver],
 })
 export class PagesModule {}

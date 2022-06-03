@@ -4,11 +4,12 @@ import { FormsModule } from "@angular/forms";
 
 import { IonicModule } from "@ionic/angular";
 import { PolarChartComponent } from "./polar-chart/polar-chart.component";
+import { RadarChartComponent } from "./radar-chart/radar-chart.component";
 
 @NgModule({
   imports: [CommonModule, FormsModule, IonicModule],
-  declarations: [PolarChartComponent],
-  exports: [PolarChartComponent],
+  declarations: [PolarChartComponent, RadarChartComponent],
+  exports: [PolarChartComponent, RadarChartComponent],
   providers: [],
 })
 export class ChartsModule {}

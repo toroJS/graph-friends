@@ -1,0 +1,61 @@
+<ng-container>
+  <ion-header class="ion-no-border">
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button></ion-back-button>
+      </ion-buttons>
+      <ion-title>Profile</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content class="connection-content">
+    <ion-card>
+      <ion-item>
+        <ion-label>Activity types All time</ion-label>
+      </ion-item>
+      <ion-card-content>
+        <app-polar-chart
+          *ngIf="events$ | async"
+          [events]="events$ | async"
+        ></app-polar-chart>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-item>
+        <ion-label>Compare activity by month</ion-label>
+      </ion-item>
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="stacked">Month - Year</ion-label>
+          <ion-datetime
+            id="first-month"
+            displayFormat="MMMM YY"
+            min="1989-06-04"
+            max="2022-08-23"
+            [(ngModel)]="selectedFirstMonth"
+            (ionChange)="onDateSelected()"
+          ></ion-datetime>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Month - Year</ion-label>
+          <ion-datetime
+            id="second-month"
+            displayFormat="MMMM YY"
+            min="1989-06-04"
+            max="2022-08-23"
+            [(ngModel)]="selectedSecondMonth"
+            (ionChange)="onSecondDateSelected()"
+          ></ion-datetime>
+        </ion-item>
+
+        <app-radar-chart
+          *ngIf="(filterFirstMonth$ | async) !== null"
+          [monthsEvents]="[
+            filterFirstMonth$ | async,
+            filterSecondMonth$ | async
+          ]"
+        ></app-radar-chart>
+      </ion-card-content>
+    </ion-card>
+  </ion-content>
+</ng-container>

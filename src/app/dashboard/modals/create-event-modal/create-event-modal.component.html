@@ -1,0 +1,96 @@
+<!-- <p>
+  create-event-modal works!
+  {{ userId }}
+  <button (click)="closeModal()">close</button>
+</p> -->
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-title>Create Event</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeModal()">Close</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="createEventForm" (ngSubmit)="createEvent()" novalidate>
+    <ion-item>
+      <ion-thumbnail slot="start">
+        <img
+          src="https://gravatar.com/avatar/dba6bae8c566f9d4041fb9cd9ada7741?d=identicon&f=y"
+        />
+      </ion-thumbnail>
+      <ion-label>Event Thumbnail</ion-label>
+    </ion-item>
+
+    <ion-item lines="full">
+      <ion-label position="floating">Event Name</ion-label>
+      <ion-input formControlName="eventName" type="text"></ion-input>
+    </ion-item>
+    <span
+      class="error ion-padding"
+      *ngIf="isSubmitted && errorControl.eventName.errors?.required"
+    >
+      Event Name is required.
+    </span>
+    <span
+      class="error ion-padding"
+      *ngIf="isSubmitted && errorControl.eventName.errors?.minlength"
+    >
+      Event Name should be min 2 chars long.
+    </span>
+    <ion-item>
+      <ion-label>Event Type</ion-label>
+      <ion-select
+        formControlName="eventType"
+        value="eventType"
+        interface="action-sheet"
+      >
+        <ion-select-option value="sport"> Sport </ion-select-option>
+        <ion-select-option value="eating">Eating</ion-select-option>
+        <ion-select-option value="drinking">Drinking</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <span
+      class="error ion-padding"
+      *ngIf="isSubmitted && errorControl.eventType.errors?.required"
+    >
+      Event Type is required.
+    </span>
+    <ion-item>
+      <ion-label>Invite Friends</ion-label>
+      <ion-select
+        formControlName="invitedFriends"
+        multiple="true"
+        value="friends"
+        interface="action-sheet"
+      >
+        <ion-select-option
+          *ngFor="let friend of friends$ | async"
+          [value]="friend.userId"
+        >
+          {{ friend.userName }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item lines="full">
+      <ion-label position="floating">Event Date</ion-label>
+      <ion-datetime
+        (ionChange)="getDate($event)"
+        formControlName="eventDate"
+        [value]="defaultDate"
+      ></ion-datetime>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Description</ion-label>
+      <ion-textarea formControlName="eventDescription" rows="6"></ion-textarea>
+    </ion-item>
+    <ion-row>
+      <ion-col>
+        <ion-button type="submit" color="success" expand="block"
+          >Create Event</ion-button
+        >
+      </ion-col>
+    </ion-row>
+  </form>
+</ion-content>

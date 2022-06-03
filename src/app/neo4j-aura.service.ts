@@ -77,14 +77,14 @@ export class Neo4jAuraService {
     this.write(createUserQuery, user);
   }
 
-  public async addConection(userId1: string, userId2: string, intFreq: number) {
+  public async addConection(userId: string, friendId: string, intFreq: number) {
     const createConectionQuery = `
-        MATCH (p1:Person {userId:$userId1}) MATCH (p2:Person{userId:$userId2 }) MERGE (p1)-[:BEFRIENDED {intFreq:$intFreq, since:$since}]->(p2)`;
+        MATCH (p1:Person {userId:$userId}) MATCH (p2:Person{userId:$friendId }) MERGE (p1)-[:BEFRIENDED {intFreq:$intFreq, since:$since}]->(p2)`;
     //replace random date for Date() after testing
     const params = {
-      userId1: userId1,
-      userId2: userId2,
-      since: new Date(),
+      userId: userId,
+      friendId: friendId,
+      since: new Date().toISOString(),
       intFreq: intFreq,
     };
     this.write(createConectionQuery, params);
@@ -163,7 +163,8 @@ export class Neo4jAuraService {
     const createEventQuery = ` MATCH(p: Person { userId:$userId }) CREATE(e:Event {eventId:$eventId, eventType:$eventType, eventDate:$eventDate, eventName:$eventName, eventDescription:$eventDescription}) MERGE(p)-[:CREATED]->(e)
         `;
     const params = { userId: userId, ...event };
-    this.write(createEventQuery, params);
+    await this.write(createEventQuery, params);
+    return event.eventId;
   }
 
   public async addAttendance(userId: string, eventId: string) {
@@ -237,6 +238,29 @@ export class Neo4jAuraService {
                                  RETURN p AS user`;
       const readResult = await session.readTransaction((tx) =>
         tx.run(readQuery, { userId: userId })
+      );
+      const results = [];
+      readResult.records.forEach((record) => {
+        results.push(record.get("user"));
+      });
+      return (results[0]?.properties as UserModel) || undefined;
+    } catch (error) {
+      console.error("Something went wrong: ", error);
+    } finally {
+      await session.close();
+    }
+    await driver.close();
+  }
+
+  public async getUserByEmail(email: string) {
+    //console.log("Get User by Id");
+    const driver = this.getDriver();
+    const session = driver.session();
+    try {
+      const readQuery = `MATCH (p:Person {email : $email})
+                                 RETURN p AS user`;
+      const readResult = await session.readTransaction((tx) =>
+        tx.run(readQuery, { email: email })
       );
       const results = [];
       readResult.records.forEach((record) => {

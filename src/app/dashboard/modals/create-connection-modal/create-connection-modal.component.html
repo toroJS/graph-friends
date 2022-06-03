@@ -1,0 +1,95 @@
+<!-- <p>
+  create-event-modal works!
+  {{ userId }}
+  <button (click)="closeModal()">close</button>
+</p> -->
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-title>Add Friend</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeModal()">Close</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <form [formGroup]="friendForm" (ngSubmit)="addFriend()" novalidate>
+    <ion-item lines="full">
+      <ion-label position="floating">Friend's Nickname</ion-label>
+      <ion-input formControlName="userName" type="text"></ion-input>
+    </ion-item>
+    <span
+      class="error ion-padding"
+      *ngIf="isSubmitted && errorControl.userName.errors?.required"
+    >
+      Event Name is required.
+    </span>
+    <span
+      class="error ion-padding"
+      *ngIf="isSubmitted && errorControl.userName.errors?.minlength"
+    >
+      Event Name should be min 2 chars long.
+    </span>
+    <ion-item lines="full">
+      <ion-label position="floating">Friend's Email</ion-label>
+      <ion-input formControlName="email" type="email"></ion-input>
+    </ion-item>
+    <span
+      class="error ion-padding"
+      *ngIf="isSubmitted && errorControl.email.errors?.required"
+    >
+      Email is required.
+    </span>
+    <span
+      class="error ion-padding"
+      *ngIf="isSubmitted && errorControl.email.errors?.pattern"
+    >
+      Please provide valid email id.
+    </span>
+    <ion-item>
+      <ion-label>Desired interaction frequency</ion-label>
+      <ion-select
+        formControlName="intFreq"
+        value="intFreq"
+        interface="action-sheet"
+      >
+        <ion-select-option value="1"> Daily </ion-select-option>
+        <ion-select-option value="7">Weekly</ion-select-option>
+        <ion-select-option value="30">Monthly</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <span
+      class="error ion-padding"
+      *ngIf="isSubmitted && errorControl.intFreq.errors?.required"
+    >
+      A desired interaction frequency is required.
+    </span>
+    <!-- <ion-item lines="full">
+      <ion-label position="floating">Mobile</ion-label>
+      <ion-input
+        maxlength="10"
+        formControlName="mobile"
+        type="text"
+        required
+      ></ion-input>
+    </ion-item>
+    <span
+      class="error ion-padding"
+      *ngIf="isSubmitted && errorControl.mobile.errors?.required"
+    >
+      Mobile number is required.
+    </span>
+    <span
+      class="error ion-padding"
+      *ngIf="isSubmitted && errorControl.mobile.errors?.pattern"
+    >
+      Only numerical values allowed.
+    </span> -->
+    <ion-row>
+      <ion-col>
+        <ion-button type="submit" color="success" expand="block"
+          >Add Friend</ion-button
+        >
+      </ion-col>
+    </ion-row>
+  </form>
+</ion-content>

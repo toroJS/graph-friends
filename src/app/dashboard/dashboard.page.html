@@ -1,9 +1,11 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <!-- <ion-back-button defaultHref="sign-in"></ion-back-button> -->
+    <ion-title>Friends</ion-title>
+    <ion-buttons slot="end">
+      <ion-button id="add-friend" (click)="presentAddFriendModal()">
+        <ion-icon slot="start" name="person-add-outline"></ion-icon>
+      </ion-button>
     </ion-buttons>
-    <ion-title>Connections</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -14,16 +16,18 @@
       class="xc"
       *ngFor="let connection of conections$ |async"
     >
-      <div (click)="goToConnection(connection.userId)">
+      <div
+        *ngIf="connection.connectionState"
+        (click)="goToConnection(connection.userId)"
+      >
         <span>{{connection.userName}}</span>
+
         <img
-          *ngIf="connection.connectionState"
-          [src]="'../../assets/connection-states/'+connection.connectionState+'.svg'"
+          [src]="'../../assets/connection-states/' +connection.connectionStateEmogi+'.svg'"
           alt="connection-emogi-state"
         />
         <img
-          *ngIf="connection.connectionState"
-          [src]="'../../assets/health-indicators/'+connection.connectionState+'.svg'"
+          [src]="'../../assets/health-indicators/'+connection.connectionStateEmogi+'.svg'"
           alt="connection-health-indicators"
         />
         <span>IF: {{connection.intFreq}}</span>
@@ -32,4 +36,9 @@
     </div>
   </div>
   <button (click)="signOut()">Generate</button>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="presentCreateEventModal()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

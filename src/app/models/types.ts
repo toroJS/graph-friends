@@ -25,13 +25,31 @@ export type UserModel = {
   intFreq?: number;
   eventsAttended?: EventModel[];
   connectionState?: any;
+  connectionStateEmogi?: string;
   friendSince?: moment.Moment;
 };
 
 export type EventModel = {
   eventId: string;
-  eventType: "sport" | "eating" | "drinking";
+  eventType: EventTypeModel;
   eventDate: moment.Moment;
   eventName: string;
   eventDescription: string;
 };
+
+export type EventTypeModel = ["sport", "eating", "drinking"];
+export enum ConnectionState {
+  State1 = 1,
+  State2,
+  State3,
+  State4,
+  State5,
+}
+
+export const avatarState = new Map([
+  [ConnectionState.State1, "state1"],
+  [ConnectionState.State2, "state2"],
+  [ConnectionState.State3, "state3"],
+  [ConnectionState.State4, "state4"],
+  [ConnectionState.State5, "state5"],
+]);
