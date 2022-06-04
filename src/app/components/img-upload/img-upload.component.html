@@ -1,0 +1,31 @@
+<ion-item>
+  <div class="avatar-upload">
+    <div class="avatar-edit">
+      <input
+        type="file"
+        id="imageUpload"
+        accept=".png, .jpg, .jpeg"
+        #fileInput
+        (change)="uploadFile($event)"
+      />
+    </div>
+    <div class="avatar-preview">
+      <div
+        id="imagePreview"
+        [style.backgroundImage]="'url(' + imageUrl + ')'"
+      ></div>
+    </div>
+    <div class="btn-container">
+      <ion-button
+        class="bottom-m"
+        color="success"
+        expand="block"
+        (click)="fileInput.click()"
+        >Upload Image</ion-button
+      >
+      <ion-button color="warning" expand="block" (click)="removeUploadedFile()"
+        >Remove Image</ion-button
+      >
+    </div>
+  </div>
+</ion-item>

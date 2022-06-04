@@ -18,6 +18,7 @@ import { ActivityComponent } from "./activity/activity.component";
 import { ProfileComponent } from "./profile/profile.component";
 import { CreateEventModalComponent } from "./modals/create-event-modal/create-event-modal.component";
 import { CreateConnectionModalComponent } from "./modals/create-connection-modal/create-connection-modal.component";
+import { ComponentsModule } from "../components/components.module";
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(["sign-in"]);
 
@@ -65,6 +66,7 @@ const routes: Routes = [
     IonicModule,
     ChartsModule,
     ReactiveFormsModule,
+    ComponentsModule,
     RouterModule.forChild(routes),
   ],
   declarations: [
