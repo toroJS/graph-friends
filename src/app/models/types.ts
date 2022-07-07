@@ -9,10 +9,11 @@ export type DBUserModel = {
 
 export type DBEventModel = {
   eventId: string;
-  eventType: "sport" | "eating" | "drinking";
+  eventType: EventTypeModel;
   eventDate: string;
   eventName: string;
   eventDescription: string;
+  eventImageSrc?: string;
 };
 
 export type UserModel = {
@@ -35,6 +36,9 @@ export type EventModel = {
   eventDate: moment.Moment;
   eventName: string;
   eventDescription: string;
+  eventImageSrc?: string;
+  pastEvent?: boolean;
+  image?: any;
 };
 
 export type EventTypeModel = ["sport", "eating", "drinking"];
@@ -44,6 +48,12 @@ export enum ConnectionState {
   State3,
   State4,
   State5,
+}
+
+export enum AttendanceStatus {
+  invited = 1,
+  confirmed,
+  declined,
 }
 
 export const avatarState = new Map([

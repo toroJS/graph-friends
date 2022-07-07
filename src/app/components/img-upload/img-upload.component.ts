@@ -2,10 +2,12 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  OnInit,
+  EventEmitter,
+  Input,
+  Output,
   ViewChild,
 } from "@angular/core";
-import { FormBuilder } from "@angular/forms";
+import { StorageService } from "src/app/services/storage.service";
 
 @Component({
   selector: "app-img-upload",
@@ -14,22 +16,18 @@ import { FormBuilder } from "@angular/forms";
 })
 export class ImgUploadComponent {
   file: any;
-  constructor(public fb: FormBuilder, private cd: ChangeDetectorRef) {}
-
-  /*##################### Registration Form #####################*/
-  // public registrationForm = this.fb.group({
-  //   file: [null],
-  // });
-
-  /*########################## File Upload ########################*/
+  @Output() outputFile = new EventEmitter<string>();
+  constructor(private cd: ChangeDetectorRef, private storage: StorageService) {}
   @ViewChild("fileInput") el: ElementRef;
-  imageUrl: any = "https://i.ibb.co/fDWsn3G/buck.jpg";
+  @Input() imageUrl: any = "";
   editFile: boolean = true;
   removeUpload: boolean = false;
 
   uploadFile(event) {
     let reader = new FileReader(); // HTML5 FileReader API
     let file = event.target.files[0];
+    this.outputFile.emit(file);
+    //this.storage.uploadFile(file);
 
     if (event.target.files && event.target.files[0]) {
       reader.readAsDataURL(file);
@@ -43,8 +41,6 @@ export class ImgUploadComponent {
         this.file = reader.result;
         this.editFile = false;
         this.removeUpload = true;
-
-        console.log(this.file);
       };
       // ChangeDetectorRef since file is loading outside the zone
       this.cd.markForCheck();

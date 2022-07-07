@@ -5,16 +5,20 @@
 </p> -->
 <ion-header translucent>
   <ion-toolbar>
-    <ion-title>Add Friend</ion-title>
+    <ion-title class="txt-light-color">Add Friend</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="closeModal()">Close</ion-button>
+      <ion-button class="txt-light-color" (click)="closeModal()"
+        >Close</ion-button
+      >
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content>
   <form [formGroup]="friendForm" (ngSubmit)="addFriend()" novalidate>
     <ion-item lines="full">
-      <ion-label position="floating">Friend's Nickname</ion-label>
+      <ion-label class="txt-light-color" position="floating"
+        >Friend's Nickname</ion-label
+      >
       <ion-input formControlName="userName" type="text"></ion-input>
     </ion-item>
     <span
@@ -30,7 +34,9 @@
       Event Name should be min 2 chars long.
     </span>
     <ion-item lines="full">
-      <ion-label position="floating">Friend's Email</ion-label>
+      <ion-label class="txt-light-color" position="floating"
+        >Friend's Email</ion-label
+      >
       <ion-input formControlName="email" type="email"></ion-input>
     </ion-item>
     <span
@@ -46,15 +52,23 @@
       Please provide valid email id.
     </span>
     <ion-item>
-      <ion-label>Desired interaction frequency</ion-label>
+      <ion-label class="txt-light-color"
+        >Desired interaction frequency</ion-label
+      >
       <ion-select
         formControlName="intFreq"
         value="intFreq"
         interface="action-sheet"
       >
-        <ion-select-option value="1"> Daily </ion-select-option>
-        <ion-select-option value="7">Weekly</ion-select-option>
-        <ion-select-option value="30">Monthly</ion-select-option>
+        <ion-select-option class="txt-light-color" value="1">
+          Daily
+        </ion-select-option>
+        <ion-select-option class="txt-light-color" value="7"
+          >Weekly</ion-select-option
+        >
+        <ion-select-option class="txt-light-color" value="30"
+          >Monthly</ion-select-option
+        >
       </ion-select>
     </ion-item>
     <span

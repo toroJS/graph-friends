@@ -14,6 +14,7 @@ import { Neo4jAuraService } from "../neo4j-aura.service";
 import { v4 as uuidv4 } from "uuid";
 import { names } from "../helpers/mockData";
 import { ProfileModel } from "../profile/profile.model";
+import { StorageService } from "./storage.service";
 
 @Injectable({ providedIn: "root" })
 export class UserService {
@@ -24,7 +25,8 @@ export class UserService {
 
   constructor(
     private authService: FirebaseAuthService,
-    private db: Neo4jAuraService
+    private db: Neo4jAuraService,
+    private storage: StorageService
   ) {
     this.authService
       .getProfileDataSource()
@@ -40,27 +42,40 @@ export class UserService {
           avatarUrl: user.avatarUrl || fireUser.image,
           phoneNumber: user.phoneNumber || fireUser.phoneNumber,
         };
-        console.log("emit user");
 
         this.user$.next(userState);
       });
   }
 
+  public async saveAvatar(userId, file) {
+    if (file) {
+      const path = `avatars/${userId}`;
+      await this.db.updateAvatar(userId, path);
+      await this.storage.uploadFile(path, file);
+    }
+  }
+
+  public async getAvatar(path: string) {
+    return await this.storage.getImage(path);
+  }
+
   public async getAllConections(userId: string) {
     const conections = await this.db.getAllConections(userId);
-    conections.map(async (connection) => {
-      connection.eventsAttended = await this.db.getAttendanceOfConnection(
-        userId,
-        connection.userId
-      );
-      connection.connectionState = this.getConnectionState(
-        connection.intFreq,
-        connection.eventsAttended[0]?.eventDate || connection.friendSince
-      );
-      connection.connectionStateEmogi = avatarState.get(
-        connection.connectionState
-      );
-    });
+    // conections.map(async (connection) => {
+    //   connection.eventsAttended = await this.db.getAttendanceOfConnection(
+    //     userId,
+    //     connection.userId
+    //   );
+    //   connection.connectionState = this.getConnectionState(
+    //     connection.intFreq,
+    //     connection.eventsAttended[0]?.eventDate || connection.friendSince
+    //   );
+    //   connection.connectionStateEmogi = avatarState.get(
+    //     connection.connectionState
+    //   );
+    // });
+    console.log(conections);
+
     this.conections$.next(conections);
   }
 

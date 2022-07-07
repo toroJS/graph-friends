@@ -6,7 +6,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import { Chart } from "chart.js";
+import { Chart, ChartOptions } from "chart.js";
 import { activityColors } from "../chartConfigs";
 
 @Component({
@@ -19,50 +19,43 @@ export class RadarChartComponent implements AfterViewInit {
   @Input() monthsEvents;
   barChart: any;
   labels: any;
+  labelColors: string[] = ["red", "blue"];
   datasets: any;
-  options = {
-    responsive: false,
-    legend: {
-      display: false,
+  options: ChartOptions<any> = {
+    indexAxis: "y",
+
+    // Elements options apply to all of the options unless overridden in a dataset
+    // In this case, we are setting the border of each horizontal bar to be 2px wide
+    elements: {
+      bar: {
+        borderWidth: 2,
+      },
     },
-    layout: {
-      padding: 15,
+    responsive: true,
+
+    plugins: {
+      legend: {
+        position: "right",
+        labels: {
+          color: "#f0cea0",
+        },
+      },
     },
     scales: {
-      xAxes: [
-        {
-          stacked: true,
-          gridLines: {
-            display: true,
-          },
-          ticks: {
-            display: true,
-            fontSize: 12,
-          },
-        },
-      ],
-      yAxes: [
-        {
-          stacked: true,
-          gridLines: {
-            display: true,
-          },
-          ticks: {
-            display: true,
-            fontSize: 12,
-          },
-        },
-      ],
+      y: {
+        ticks: { color: "#f0cea0", beginAtZero: true },
+      },
+      x: {
+        ticks: { color: "#f0cea0", beginAtZero: true },
+      },
     },
   };
 
   constructor() {}
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log(changes.monthsEvents.currentValue);
     const current = changes.monthsEvents.currentValue;
     if (current) {
-      console.log();
       this.updateChart();
     }
   }
@@ -87,7 +80,6 @@ export class RadarChartComponent implements AfterViewInit {
     for (const label of this.labels) {
       let count = 0;
       for (const event of monthsEvents) {
-        console.log(event);
         data.label = event.eventDate.format("MMM");
         if (label === event.eventType) {
           count++;
@@ -96,15 +88,15 @@ export class RadarChartComponent implements AfterViewInit {
       data.count.push(count);
       data.labelColors.push(activityColors.get(label));
     }
-    console.log(data);
 
     return data;
   }
 
   getDatasets() {
     this.datasets = [];
-    for (const month of this.monthsEvents) {
-      console.log(month);
+    for (const [i, month] of this.monthsEvents.entries()) {
+      console.log(month, i);
+
       const data = this.countEventsAndGetLabelColor(month);
       const monthCount = data.count;
       const labelColors = data.labelColors;
@@ -112,7 +104,7 @@ export class RadarChartComponent implements AfterViewInit {
       const dataSet = {
         label: label,
         data: monthCount,
-        backgroundColor: labelColors,
+        backgroundColor: labelColors[i],
       };
       this.datasets.push(dataSet);
     }
@@ -127,8 +119,6 @@ export class RadarChartComponent implements AfterViewInit {
   }
   updateChart() {
     if (this.barChart) {
-      console.log("update chart");
-
       this.removeNull();
       this.getLabels();
       this.getDatasets();
@@ -142,10 +132,6 @@ export class RadarChartComponent implements AfterViewInit {
     this.removeNull();
     this.getLabels();
     this.getDatasets();
-    console.log(this.monthsEvents);
-    console.log(this.labels);
-
-    console.log(this.datasets);
 
     this.barChart = new Chart(this.chartCanvas.nativeElement, {
       type: "bar",
@@ -153,6 +139,7 @@ export class RadarChartComponent implements AfterViewInit {
         labels: this.labels,
         datasets: this.datasets,
       },
+      options: this.options,
     });
   }
 }

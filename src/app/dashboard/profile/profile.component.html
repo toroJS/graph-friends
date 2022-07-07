@@ -1,16 +1,18 @@
 <ng-container>
   <ion-header class="ion-no-border">
     <ion-toolbar>
-      <ion-buttons slot="start">
-        <ion-back-button></ion-back-button>
+      <ion-title class="txt-light-color">Profile</ion-title>
+      <ion-buttons slot="end" (click)="presentSettingsModal()">
+        <ion-button id="add-friend">
+          <ion-icon class="txt-light-color" name="settings-outline"></ion-icon>
+        </ion-button>
       </ion-buttons>
-      <ion-title>Profile</ion-title>
     </ion-toolbar>
   </ion-header>
   <ion-content class="connection-content">
     <ion-card>
       <ion-item>
-        <ion-label>Activity types All time</ion-label>
+        <ion-label class="txt-light-color">Activity types All time</ion-label>
       </ion-item>
       <ion-card-content>
         <app-polar-chart
@@ -22,11 +24,13 @@
 
     <ion-card>
       <ion-item>
-        <ion-label>Compare activity by month</ion-label>
+        <ion-label class="txt-light-color">Compare activity by month</ion-label>
       </ion-item>
       <ion-card-content>
         <ion-item>
-          <ion-label position="stacked">Month - Year</ion-label>
+          <ion-label class="txt-light-color" position="stacked"
+            >Month - Year</ion-label
+          >
           <ion-datetime
             id="first-month"
             displayFormat="MMMM YY"
@@ -37,7 +41,9 @@
           ></ion-datetime>
         </ion-item>
         <ion-item>
-          <ion-label position="stacked">Month - Year</ion-label>
+          <ion-label class="txt-light-color" position="stacked"
+            >Month - Year</ion-label
+          >
           <ion-datetime
             id="second-month"
             displayFormat="MMMM YY"

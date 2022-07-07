@@ -1,6 +1,19 @@
 .connection-content {
-    --padding-bottom: 16px;
-    --padding-end: 16px;
-    --padding-start: 16px;
-    --padding-top: 16px;
-  }
+  --padding-bottom: 16px;
+  --padding-end: 16px;
+  --padding-start: 16px;
+  --padding-top: 16px;
+}
+
+.status-container {
+  display: flex;
+  align-items: center;
+}
+
+.health-bar {
+  height: 30px;
+}
+
+.emogi {
+  height: 45px;
+}

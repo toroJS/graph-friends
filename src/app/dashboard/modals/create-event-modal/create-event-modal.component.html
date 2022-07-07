@@ -5,9 +5,11 @@
 </p> -->
 <ion-header translucent>
   <ion-toolbar>
-    <ion-title>Create Event</ion-title>
+    <ion-title class="txt-light-color">Create Event</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="closeModal()">Close</ion-button>
+      <ion-button class="txt-light-color" (click)="closeModal()"
+        >Close</ion-button
+      >
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -15,11 +17,13 @@
 <ion-content>
   <form [formGroup]="createEventForm" (ngSubmit)="createEvent()" novalidate>
     <ion-item>
-      <ion-label>Event Thumbnail</ion-label>
+      <ion-label class="txt-light-color">Event Thumbnail</ion-label>
     </ion-item>
-    <app-img-upload></app-img-upload>
+    <app-img-upload (outputFile)="onEmitFile($event)"></app-img-upload>
     <ion-item lines="full">
-      <ion-label position="floating">Event Name</ion-label>
+      <ion-label class="txt-light-color" position="floating"
+        >Event Name</ion-label
+      >
       <ion-input formControlName="eventName" type="text"></ion-input>
     </ion-item>
     <span
@@ -35,15 +39,21 @@
       Event Name should be min 2 chars long.
     </span>
     <ion-item>
-      <ion-label>Event Type</ion-label>
+      <ion-label class="txt-light-color">Event Type</ion-label>
       <ion-select
         formControlName="eventType"
         value="eventType"
         interface="action-sheet"
       >
-        <ion-select-option value="sport"> Sport </ion-select-option>
-        <ion-select-option value="eating">Eating</ion-select-option>
-        <ion-select-option value="drinking">Drinking</ion-select-option>
+        <ion-select-option class="txt-light-color" value="sport">
+          Sport
+        </ion-select-option>
+        <ion-select-option class="txt-light-color" value="eating"
+          >Eating</ion-select-option
+        >
+        <ion-select-option class="txt-light-color" value="drinking"
+          >Drinking</ion-select-option
+        >
       </ion-select>
     </ion-item>
     <span
@@ -53,7 +63,7 @@
       Event Type is required.
     </span>
     <ion-item>
-      <ion-label>Invite Friends</ion-label>
+      <ion-label class="txt-light-color">Invite Friends</ion-label>
       <ion-select
         formControlName="invitedFriends"
         multiple="true"
@@ -69,7 +79,9 @@
       </ion-select>
     </ion-item>
     <ion-item lines="full">
-      <ion-label position="floating">Event Date</ion-label>
+      <ion-label class="txt-light-color" position="floating"
+        >Event Date</ion-label
+      >
       <ion-datetime
         (ionChange)="getDate($event)"
         formControlName="eventDate"
@@ -77,7 +89,9 @@
       ></ion-datetime>
     </ion-item>
     <ion-item>
-      <ion-label position="floating">Description</ion-label>
+      <ion-label class="txt-light-color" position="floating"
+        >Description</ion-label
+      >
       <ion-textarea formControlName="eventDescription" rows="6"></ion-textarea>
     </ion-item>
     <ion-row>

@@ -1,0 +1,22 @@
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-title class="txt-light-color">Settings</ion-title>
+    <ion-buttons slot="end">
+      <ion-button class="txt-light-color" (click)="closeModal()"
+        >Close</ion-button
+      >
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="settingsForm" (ngSubmit)="saveSettings()" novalidate>
+    <ion-item>
+      <ion-label class="txt-light-color">User Avatar</ion-label>
+    </ion-item>
+    <app-img-upload
+      [imageUrl]="avatarUrl | async"
+      (outputFile)="onEmitFile($event)"
+    ></app-img-upload>
+  </form>
+</ion-content>

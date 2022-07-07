@@ -23,7 +23,6 @@ export class PolarChartComponent implements AfterViewInit {
   }
 
   pieChartBrowser(): void {
-    console.log(this.events);
     const labels = [];
     const data = [];
     for (const event of this.events) {
@@ -54,6 +53,15 @@ export class PolarChartComponent implements AfterViewInit {
             data: data,
           },
         ],
+      },
+      options: {
+        plugins: {
+          legend: {
+            labels: {
+              color: "#f0cea0",
+            },
+          },
+        },
       },
     });
   }

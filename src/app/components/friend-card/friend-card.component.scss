@@ -1,0 +1,48 @@
+.xc {
+  height: 230px;
+  width: 165px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin: 0px;
+  padding: 10px;
+}
+
+.friend-name {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.status-container {
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  .emogi {
+    height: 40px;
+  }
+
+  .health-bar {
+    width: 80px;
+  }
+}
+
+.emogi {
+  position: absolute;
+  top: -5px;
+  right: -7px;
+  height: 55px;
+}
+
+.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  //box-shadow: -1rem 0 3rem #000;
+}
+
+.badge {
+  margin-top: 5px;
+}

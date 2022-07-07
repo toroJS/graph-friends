@@ -15,6 +15,7 @@ export class CreateConnectionModalComponent implements OnInit, OnDestroy {
   @Input() userId: string;
   @Input() friends$;
   private friends;
+
   private friendsSubscription;
   public friendForm: FormGroup;
   defaultDate = new Date().toISOString();
@@ -68,17 +69,15 @@ export class CreateConnectionModalComponent implements OnInit, OnDestroy {
       console.log("Please provide all the required values!");
       return false;
     } else {
-      console.log(this.friendForm.value);
       const { userName, email, intFreq } = this.friendForm.value;
-      console.log(this.friends.includes(email));
+
       if (!this.friends.includes(email)) {
         const newFriend = await this.db.getUserByEmail(email);
         if (newFriend) {
-          console.log("only befriend");
           this.db.addConection(this.userId, newFriend.userId, intFreq);
         } else {
           //not sure if only allow the creation of users that are in the platform?
-          console.log("create and befriend");
+
           const newUserId = uuidv4();
           const createFriend: UserModel = {
             userId: newUserId,
@@ -93,7 +92,6 @@ export class CreateConnectionModalComponent implements OnInit, OnDestroy {
       } else {
         console.log("already a friend");
       }
-      console.log(this.friends);
     }
   }
 

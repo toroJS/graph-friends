@@ -1,41 +1,28 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-title>Friends</ion-title>
+    <ion-title class="txt-light-color">Friends</ion-title>
     <ion-buttons slot="end">
       <ion-button id="add-friend" (click)="presentAddFriendModal()">
-        <ion-icon slot="start" name="person-add-outline"></ion-icon>
+        <ion-icon
+          class="txt-light-color"
+          slot="start"
+          name="person-add-outline"
+        ></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-
 <ion-content class="connections-content">
   <div class="grids">
-    <div
-      style="--aspect-ratio: 1/1"
-      class="xc"
-      *ngFor="let connection of conections$ |async"
-    >
-      <div
-        *ngIf="connection.connectionState"
-        (click)="goToConnection(connection.userId)"
-      >
-        <span>{{connection.userName}}</span>
-
-        <img
-          [src]="'../../assets/connection-states/' +connection.connectionStateEmogi+'.svg'"
-          alt="connection-emogi-state"
-        />
-        <img
-          [src]="'../../assets/health-indicators/'+connection.connectionStateEmogi+'.svg'"
-          alt="connection-health-indicators"
-        />
-        <span>IF: {{connection.intFreq}}</span>
-        <span>Since: {{connection.friendSince.format('L')}}</span>
-      </div>
-    </div>
+    <app-friend-card
+      style="border-radius: 10px"
+      *ngFor="let friend of conections$ |async"
+      [friend]="friend"
+      [userId]="user.userId"
+      (goToSingleFriend)="goToConnection($event)"
+    ></app-friend-card>
   </div>
-  <button (click)="signOut()">Generate</button>
+
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button (click)="presentCreateEventModal()">
       <ion-icon name="add"></ion-icon>

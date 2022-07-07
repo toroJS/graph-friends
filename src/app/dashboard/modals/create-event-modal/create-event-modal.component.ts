@@ -1,7 +1,9 @@
 import { Component, Input } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { ModalController } from "@ionic/angular";
+import { LoadingController, ModalController } from "@ionic/angular";
 import { Neo4jAuraService } from "src/app/neo4j-aura.service";
+import { EventsService } from "src/app/services/events.service";
+import { StorageService } from "src/app/services/storage.service";
 import { v4 as uuidv4 } from "uuid";
 
 @Component({
@@ -15,12 +17,17 @@ export class CreateEventModalComponent {
   public createEventForm: FormGroup;
 
   defaultDate = new Date().toISOString();
+  file: any;
   isSubmitted = false;
+  loading: HTMLIonLoadingElement;
   eventTypes = ["sport", "eating"];
   constructor(
     private modalController: ModalController,
     private formBuilder: FormBuilder,
-    private db: Neo4jAuraService
+    private db: Neo4jAuraService,
+    private storage: StorageService,
+    private eventsService: EventsService,
+    public loadingController: LoadingController
   ) {
     // componentProps can also be accessed at construction time using NavParams
 
@@ -39,6 +46,10 @@ export class CreateEventModalComponent {
       eventDescription: [],
       // mobile: ["", [Validators.required, Validators.pattern("^[0-9]+$")]],
     });
+  }
+
+  public onEmitFile(file) {
+    this.file = file;
   }
 
   getDate(e) {
@@ -73,6 +84,10 @@ export class CreateEventModalComponent {
       console.log("Please provide all the required values!");
       return false;
     } else {
+      this.loading = await this.loadingController.create({
+        message: "Please wait...",
+      });
+      await this.loading.present();
       const {
         eventDate,
         eventDescription,
@@ -80,19 +95,27 @@ export class CreateEventModalComponent {
         eventType,
         invitedFriends,
       } = this.createEventForm.value;
+      const generatedId = uuidv4();
       const newEvent = {
-        eventId: uuidv4(),
+        eventId: generatedId,
         eventType: eventType,
         eventDate: eventDate,
         eventName: eventName,
+        eventImageSrc: this.file?.name
+          ? `events/${generatedId + "/" + this.file.name}`
+          : "",
         eventDescription: eventDescription,
       };
-      const eventId = await this.db.createEvent(this.userId, newEvent);
-      // this.db.addAttendance(invitedFriends, eventId);
-      invitedFriends.forEach((friend) => {
-        this.db.addAttendance(friend, eventId);
-      });
-      console.log(eventId);
+
+      await this.eventsService.createEvent(
+        this.userId,
+        newEvent,
+        invitedFriends,
+        this.file
+      );
+
+      this.loading.dismiss();
+      this.closeModal();
     }
   }
 }

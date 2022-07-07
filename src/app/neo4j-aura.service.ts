@@ -9,7 +9,12 @@ import * as moment from "moment";
 // import { filter, map, take } from 'rxjs/operators';
 import neo4j from "neo4j-driver";
 import Helper from "./helpers/helpers";
-import { DBEventModel, EventModel, UserModel } from "./models/types";
+import {
+  AttendanceStatus,
+  DBEventModel,
+  EventModel,
+  UserModel,
+} from "./models/types";
 
 @Injectable({ providedIn: "root" })
 export class Neo4jAuraService {
@@ -18,58 +23,6 @@ export class Neo4jAuraService {
   password = "QCiEm5hd9Ai7uukxQkrY222ckOCUTyURJkoOujpvC20";
 
   constructor() {}
-
-  // public async backend() {
-  //     console.log('log backend');
-
-  //     const uri = 'neo4j+s://b4d62e62.databases.neo4j.io';
-  //     const user = 'neo4j';
-  //     const password = 'QCiEm5hd9Ai7uukxQkrY222ckOCUTyURJkoOujpvC20';
-
-  //     const driver = neo4j.driver(uri, neo4j.auth.basic(user, password))
-  //     const session = driver.session()
-
-  //     const person1Name = 'Alice'
-  //     const person2Name = 'David'
-
-  //     try {
-  //         // To learn more about the Cypher syntax, see https://neo4j.com/docs/cypher-manual/current/
-  //         // The Reference Card is also a good resource for keywords https://neo4j.com/docs/cypher-refcard/current/
-  //         const writeQuery = `MERGE (p1:Person { name: $person1Name })
-  //                               MERGE (p2:Person { name: $person2Name })
-  //                               MERGE (p1)-[:KNOWS]->(p2)
-  //                               RETURN p1, p2`
-
-  //         // Write transactions allow the driver to handle retries and transient errors
-  //         const writeResult = await session.writeTransaction(tx =>
-  //             tx.run(writeQuery, { person1Name, person2Name })
-  //         )
-  //         writeResult.records.forEach(record => {
-  //             const person1Node = record.get('p1')
-  //             const person2Node = record.get('p2')
-  //             console.log(
-  //                 `Created friendship between: ${person1Node.properties.name}, ${person2Node.properties.name}`
-  //             )
-  //         })
-
-  //         const readQuery = `MATCH (p:Person)
-  //                              WHERE p.name = $personName
-  //                              RETURN p.name AS name`
-  //         const readResult = await session.readTransaction(tx =>
-  //             tx.run(readQuery, { personName: person1Name })
-  //         )
-  //         readResult.records.forEach(record => {
-  //             console.log(`Found person: ${record.get('name')}`)
-  //         })
-  //     } catch (error) {
-  //         console.error('Something went wrong: ', error)
-  //     } finally {
-  //         await session.close()
-  //     }
-
-  //     // Don't forget to close the driver connection when you're finished with it
-  //     await driver.close()
-  // }
 
   public async createUser(user: UserModel) {
     console.log("Create User");
@@ -138,6 +91,9 @@ export class Neo4jAuraService {
           },
         });
       });
+      console.log("results");
+      console.log(results);
+
       return results;
     } catch (error) {
       console.error("Something went wrong: ", error);
@@ -158,9 +114,16 @@ export class Neo4jAuraService {
     this.write(changeIntFreqQuery, params);
   }
 
+  public async updateAvatar(userId: string, avatarUrl: string) {
+    const updateAvatarQuery = `
+    MATCH  (p:Person {userId:$userId}) set p.avatarUrl = $avatarUrl`;
+    const params = { userId: userId, avatarUrl: avatarUrl };
+    this.write(updateAvatarQuery, params);
+  }
+
   public async createEvent(userId: string, event: DBEventModel) {
     console.log("Create Event");
-    const createEventQuery = ` MATCH(p: Person { userId:$userId }) CREATE(e:Event {eventId:$eventId, eventType:$eventType, eventDate:$eventDate, eventName:$eventName, eventDescription:$eventDescription}) MERGE(p)-[:CREATED]->(e)
+    const createEventQuery = ` MATCH(p: Person { userId:$userId }) CREATE(e:Event {eventId:$eventId, eventType:$eventType, eventDate:$eventDate, eventName:$eventName, eventDescription:$eventDescription, eventImageSrc:$eventImageSrc}) MERGE(p)-[:CREATED]->(e)
         `;
     const params = { userId: userId, ...event };
     await this.write(createEventQuery, params);
@@ -168,9 +131,11 @@ export class Neo4jAuraService {
   }
 
   public async addAttendance(userId: string, eventId: string) {
-    const addAttendanceQuery = `MATCH(e:Event {eventId: $eventId}) MATCH (p:Person {userId: $userId }) MERGE (p)-[:ATTENDED]->(e)`;
+    const addAttendanceQuery = `MATCH(e:Event {eventId: $eventId}) MATCH (p:Person {userId: $userId }) MERGE (p)-[:ATTENDED {status: 1}]->(e)`;
     const params = { userId: userId, eventId: eventId };
     this.write(addAttendanceQuery, params);
+
+    //MATCH (p1:Person {userId:$userId}) MATCH (p2:Person{userId:$friendId }) MERGE (p1)-[:BEFRIENDED {intFreq:$intFreq, since:$since}]->(p2)`;
   }
 
   public async getAllEventsCreatedByUserId(userId: string) {
@@ -199,11 +164,27 @@ export class Neo4jAuraService {
     await driver.close();
   }
 
+  //RETURN rel.intFreq AS intFreq, rel.since AS since, f AS conections
+  //   const readResult = await session.readTransaction((tx) =>
+  //   tx.run(getAllConectionsQuery, params)
+  // );
+  // const results: UserModel[] = [];
+  // readResult.records.forEach((record) => {
+  //   //console.log(Date.parse((record.get("conections").properties).createdAt));
+
+  //   results.push({
+  //     ...record.get("conections").properties,
+  //     ...{
+  //       intFreq: record.get("intFreq"),
+  //       friendSince: moment(record.get("since")),
+  //     },
+  //   });
+  // });
   public async getAttendanceOfConnection(
     userId: string,
     conectionUserId: string
   ) {
-    const getAttendanceOfConnectionQuery = `MATCH (p:Person {userId:$conectionUserId})-[:ATTENDED]->(e) MATCH (d:Person {userId:$userId})-[:CREATED]->(e)  RETURN e AS event`;
+    const getAttendanceOfConnectionQuery = `MATCH (p:Person {userId:$conectionUserId})-[att:ATTENDED]->(e) MATCH (d:Person {userId:$userId})-[:CREATED]->(e)  RETURN att.status AS status, e AS event`;
     const params = { conectionUserId: conectionUserId, userId: userId };
     const driver = this.getDriver();
     const session = driver.session();
@@ -214,11 +195,14 @@ export class Neo4jAuraService {
       const results: EventModel[] = [];
       readResult.records.forEach((record) => {
         const event = record.get("event").properties;
+        event.attendanceStatus = (record.get("status") ||
+          1) as AttendanceStatus;
         event.eventDate = moment(event.eventDate);
         results.push(record.get("event").properties);
       });
 
       const sortedResults = Helper.sortByDate(results, "eventDate", "desc");
+      //console.log(sortedResults);
 
       return sortedResults;
     } catch (error) {

@@ -1,0 +1,31 @@
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-title class="txt-light-color">{{ event.eventName }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button class="txt-light-color" (click)="closeModal()"
+        >Close</ion-button
+      >
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-item>
+    Event Type:
+    <ion-badge [color]="'success'" slot="end">{{
+      event.eventType
+    }}</ion-badge></ion-item
+  >
+  <img
+    class="event-photo"
+    [src]="(event.image | async) || './avatar-finn.png'"
+  />
+  <ion-item>
+    Date:
+    <ion-badge [color]="event.pastEvent ? 'warning' : 'primary'" slot="end">{{
+      event.eventDate.format("DD.M.YY")
+    }}</ion-badge></ion-item
+  >
+  <ion-item *ngIf="event.eventDescription">
+    <p>{{ event.eventDescription }}</p>
+  </ion-item>
+</ion-content>

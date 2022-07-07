@@ -11,13 +11,19 @@
 }
 
 .grids > * {
-  background: orange;
-  width: 91%;
+  background: #534d41;
   align-self: center;
   justify-self: center;
   margin: 5%;
+  box-shadow: -1rem 0 3rem #000;
 }
-.grids > [style^='--aspect-ratio']::before {
+
+.grids > *:hover {
+  transform: translateY(-20px);
+  transition: 0.4s ease-out;
+}
+
+.grids > [style^="--aspect-ratio"]::before {
   content: "";
   display: inline-block;
   width: 1px;

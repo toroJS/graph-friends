@@ -19,6 +19,8 @@ import { ProfileComponent } from "./profile/profile.component";
 import { CreateEventModalComponent } from "./modals/create-event-modal/create-event-modal.component";
 import { CreateConnectionModalComponent } from "./modals/create-connection-modal/create-connection-modal.component";
 import { ComponentsModule } from "../components/components.module";
+import { SettingsComponent } from "./modals/settings/settings.component";
+import { ActivityModalComponent } from "./modals/activity-modal/activity-modal.component";
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(["sign-in"]);
 
@@ -76,6 +78,8 @@ const routes: Routes = [
     ProfileComponent,
     CreateEventModalComponent,
     CreateConnectionModalComponent,
+    SettingsComponent,
+    ActivityModalComponent,
   ],
   providers: [DashboardPageResolver],
 })
