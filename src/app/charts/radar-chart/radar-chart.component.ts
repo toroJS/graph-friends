@@ -75,7 +75,7 @@ export class RadarChartComponent implements AfterViewInit {
   countEventsAndGetLabelColor(monthsEvents) {
     let data: any = {};
     data.count = [];
-    data.labelColors = [];
+    data.labelColors = ["#b3d4ff", "#00bfa0"];
     data.label = null;
     for (const label of this.labels) {
       let count = 0;
@@ -86,7 +86,7 @@ export class RadarChartComponent implements AfterViewInit {
         }
       }
       data.count.push(count);
-      data.labelColors.push(activityColors.get(label));
+      //data.labelColors.push(activityColors.get(label));
     }
 
     return data;

@@ -37,6 +37,7 @@ export type EventModel = {
   eventName: string;
   eventDescription: string;
   eventImageSrc?: string;
+  eventDateStatus?: EventDateStatus;
   pastEvent?: boolean;
   image?: any;
 };
@@ -54,6 +55,18 @@ export enum AttendanceStatus {
   invited = 1,
   confirmed,
   declined,
+}
+
+export enum EventDateStatus {
+  past = 1,
+  present,
+  future,
+}
+
+export enum IntFreq {
+  Daily = 1,
+  Weekly = 7,
+  Monthly = 30,
 }
 
 export const avatarState = new Map([

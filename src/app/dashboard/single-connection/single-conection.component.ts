@@ -4,7 +4,13 @@ import { Neo4jAuraService } from "../../neo4j-aura.service";
 import { UserService } from "../../services/user.service";
 import { Subject } from "rxjs";
 import { filter } from "rxjs/operators";
-import { avatarState, UserModel } from "../../models/types";
+import {
+  AttendanceStatus,
+  avatarState,
+  EventDateStatus,
+  IntFreq,
+  UserModel,
+} from "../../models/types";
 import * as moment from "moment";
 import { StorageService } from "src/app/services/storage.service";
 import Helper from "src/app/helpers/helpers";
@@ -17,11 +23,13 @@ import Helper from "src/app/helpers/helpers";
 export class SingleConectionComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   conections$ = this.userService.conections$;
-
+  public AttendanceStatus = AttendanceStatus;
   public user: UserModel;
   public selectedConnection: UserModel;
   public showFullEventList = false;
   public goalInteraction: number;
+  public EventDateStatus = EventDateStatus;
+  public IntFreq = IntFreq;
   constructor(
     private route: ActivatedRoute,
     private userService: UserService,
@@ -57,7 +65,17 @@ export class SingleConectionComponent implements OnInit, OnDestroy {
                   async (element) => {
                     const now = moment();
                     var dDiff = now.diff(element.eventDate);
-                    element.pastEvent = dDiff > 0 ? true : false;
+                    var iscurrentDate = element.eventDate.isSame(
+                      new Date(),
+                      "day"
+                    );
+                    if (iscurrentDate) {
+                      element.eventDateStatus = EventDateStatus.present;
+                    } else if ((element.pastEvent = dDiff > 0)) {
+                      element.eventDateStatus = EventDateStatus.past;
+                    } else {
+                      element.eventDateStatus = EventDateStatus.future;
+                    }
                     if (element.eventImageSrc)
                       element.image = await this.storage.getImage(
                         element.eventImageSrc
@@ -65,14 +83,21 @@ export class SingleConectionComponent implements OnInit, OnDestroy {
                   }
                 );
               }
-              this.goalInteraction = this.selectedConnection.intFreq;
+              this.goalInteraction = Math.floor(
+                this.selectedConnection.intFreq
+              );
+
+              const pastEvents = this.selectedConnection.eventsAttended?.filter(
+                (e) => {
+                  console.log(e);
+                  console.log(Helper.isBeforeNow(e.eventDate));
+                  return Helper.isBeforeNow(e.eventDate);
+                }
+              );
+
               const lastEventDate =
-                this.selectedConnection.eventsAttended?.length > 0
-                  ? this.selectedConnection.eventsAttended?.filter((e) => {
-                      console.log(e);
-                      console.log(Helper.isBeforeNow(e.eventDate));
-                      return Helper.isBeforeNow(e.eventDate);
-                    })[0]?.eventDate
+                pastEvents?.length > 0
+                  ? pastEvents[0].eventDate
                   : this.selectedConnection.friendSince;
               this.selectedConnection.connectionState =
                 this.userService.getConnectionState(
@@ -94,8 +119,18 @@ export class SingleConectionComponent implements OnInit, OnDestroy {
     return result;
   }
 
-  changeIntercationFreq() {
-    console.log(this.goalInteraction);
+  public changeIntercationFreq(intFreq) {
+    console.log("change int freq");
+    this.selectedConnection.intFreq = intFreq;
+    this.goalInteraction = intFreq;
+    this.db.changeInteractionFreq(
+      this.user.userId,
+      this.selectedConnection.userId,
+      intFreq
+    );
+
+    console.log(intFreq);
+    this.userService.getAllConections(this.user.userId);
   }
 
   ngOnDestroy() {

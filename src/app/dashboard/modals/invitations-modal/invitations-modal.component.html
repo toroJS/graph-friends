@@ -1,0 +1,53 @@
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-title class="txt-light-color">{{ event.eventName }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button class="txt-light-color" (click)="closeModal()"
+        >Close</ion-button
+      >
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-item>
+    Are you Attending:
+
+    <ion-icon
+      name="checkmark"
+      style="margin-left: auto"
+      class="ion-margin-end confirmed"
+      [class.confirmed]="event.attendanceStatus === AttendanceStatus.confirmed"
+      (click)="changeInvitationStatus(AttendanceStatus.confirmed)"
+    ></ion-icon>
+    <ion-icon
+      name="close"
+      [class.declined]="event.attendanceStatus === AttendanceStatus.declined"
+      (click)="changeInvitationStatus(AttendanceStatus.declined)"
+    ></ion-icon>
+  </ion-item>
+  <ion-item>
+    Event Type:
+    <ion-badge [color]="'success'" slot="end">{{
+      event.eventType
+    }}</ion-badge></ion-item
+  >
+  <img
+    class="event-photo"
+    [src]="(event.image | async) || './avatar-finn.png'"
+  />
+  <ion-item>
+    <div style="display: flex; flex-direction: column">
+      <span
+        class="ion-text-center txt-light-color"
+        style="font-size: 14px; margin-bottom: 2px"
+        >Date</span
+      >
+      <ion-badge [color]="event.pastEvent ? 'warning' : 'primary'" slot="end">{{
+        event.eventDate.format("DD.M.YY")
+      }}</ion-badge>
+    </div>
+  </ion-item>
+  <ion-item *ngIf="event.eventDescription">
+    <p>{{ event.eventDescription }}</p>
+  </ion-item>
+</ion-content>

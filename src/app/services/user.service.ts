@@ -4,6 +4,7 @@ import { BehaviorSubject, Subject } from "rxjs";
 import { FirebaseAuthService } from "../firebase-auth.service";
 import Helper from "../helpers/helpers";
 import {
+  AttendanceStatus,
   avatarState,
   DBEventModel,
   DBUserModel,
@@ -21,6 +22,7 @@ export class UserService {
   public user$ = new BehaviorSubject<UserModel>(null);
   public conections$ = new BehaviorSubject<UserModel[]>(null);
   public createdEvents$ = new BehaviorSubject<EventModel[]>(null);
+  public invitations$ = new BehaviorSubject<EventModel[]>(null);
   public selectedConnectionId$ = new BehaviorSubject<string>(null);
 
   constructor(
@@ -82,6 +84,19 @@ export class UserService {
   public async getAllCreatedEvents(userId: string) {
     const events = await this.db.getAllEventsCreatedByUserId(userId);
     this.createdEvents$.next(events);
+  }
+
+  public async getInvitations(userId: string) {
+    const invitations = await this.db.getInvitations(userId);
+    this.invitations$.next(invitations);
+  }
+
+  public async changeInvitationStatus(
+    userId: string,
+    eventId: string,
+    status: AttendanceStatus
+  ) {
+    await this.db.changeAttendanceStatus(userId, eventId, status);
   }
 
   public getConnectionState(intFreq: number, lastEventDate: moment.Moment) {

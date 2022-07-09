@@ -21,6 +21,9 @@ import { CreateConnectionModalComponent } from "./modals/create-connection-modal
 import { ComponentsModule } from "../components/components.module";
 import { SettingsComponent } from "./modals/settings/settings.component";
 import { ActivityModalComponent } from "./modals/activity-modal/activity-modal.component";
+import { InvitationsComponent } from "./invitations/invitations.component";
+import { InvitationsModalComponent } from "./modals/invitations-modal/invitations-modal.component";
+import { EventsComponent } from "./events/events.component";
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(["sign-in"]);
 
@@ -35,13 +38,14 @@ const routes: Routes = [
     },
   },
   {
-    path: "activity",
-    component: ActivityComponent,
+    path: "events",
+    component: EventsComponent,
     data: { authGuardPipe: redirectUnauthorizedToLogin },
     resolve: {
       data: DashboardPageResolver,
     },
   },
+
   {
     path: "profile",
     component: ProfileComponent,
@@ -75,11 +79,14 @@ const routes: Routes = [
     DashboardPage,
     SingleConectionComponent,
     ActivityComponent,
+    EventsComponent,
     ProfileComponent,
     CreateEventModalComponent,
     CreateConnectionModalComponent,
     SettingsComponent,
     ActivityModalComponent,
+    InvitationsComponent,
+    InvitationsModalComponent,
   ],
   providers: [DashboardPageResolver],
 })

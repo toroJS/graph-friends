@@ -1,0 +1,26 @@
+<ng-container>
+  <ion-header class="ion-no-border">
+    <ion-toolbar>
+      <ion-segment (ionChange)="segmentChanged($event)" value="host">
+        <ion-segment-button value="host">
+          <ion-label>As Host</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="guest">
+          <ion-label>As Guest</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+      <!-- <ion-buttons slot="start">
+        <ion-back-button></ion-back-button>
+      </ion-buttons>
+      <ion-title class="txt-light-color">My Events</ion-title> -->
+    </ion-toolbar>
+  </ion-header>
+  <app-activity
+    *ngIf="selectedTab === 'host'"
+    style="height: 100%"
+  ></app-activity>
+  <app-invitations
+    *ngIf="selectedTab === 'guest'"
+    style="height: 100%"
+  ></app-invitations>
+</ng-container>

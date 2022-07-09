@@ -123,7 +123,7 @@ export class Neo4jAuraService {
 
   public async createEvent(userId: string, event: DBEventModel) {
     console.log("Create Event");
-    const createEventQuery = ` MATCH(p: Person { userId:$userId }) CREATE(e:Event {eventId:$eventId, eventType:$eventType, eventDate:$eventDate, eventName:$eventName, eventDescription:$eventDescription, eventImageSrc:$eventImageSrc}) MERGE(p)-[:CREATED]->(e)
+    const createEventQuery = ` MATCH(p: Person { userId:$userId }) CREATE(e:Event {eventId:$eventId, createdBy:$userId, eventType:$eventType, eventDate:$eventDate, eventName:$eventName, eventDescription:$eventDescription, eventImageSrc:$eventImageSrc}) MERGE(p)-[:CREATED]->(e)
         `;
     const params = { userId: userId, ...event };
     await this.write(createEventQuery, params);
@@ -136,6 +136,17 @@ export class Neo4jAuraService {
     this.write(addAttendanceQuery, params);
 
     //MATCH (p1:Person {userId:$userId}) MATCH (p2:Person{userId:$friendId }) MERGE (p1)-[:BEFRIENDED {intFreq:$intFreq, since:$since}]->(p2)`;
+  }
+
+  public async changeAttendanceStatus(
+    userId: string,
+    eventId: string,
+    status: number
+  ) {
+    const changeAttendanceStatusQuery = `
+        MATCH  (a:Person {userId:$userId})-[rel:ATTENDED]->(e:Event {eventId:$eventId}) set rel.status = $status`;
+    const params = { userId: userId, eventId: eventId, status: status };
+    this.write(changeAttendanceStatusQuery, params);
   }
 
   public async getAllEventsCreatedByUserId(userId: string) {
@@ -186,6 +197,36 @@ export class Neo4jAuraService {
   ) {
     const getAttendanceOfConnectionQuery = `MATCH (p:Person {userId:$conectionUserId})-[att:ATTENDED]->(e) MATCH (d:Person {userId:$userId})-[:CREATED]->(e)  RETURN att.status AS status, e AS event`;
     const params = { conectionUserId: conectionUserId, userId: userId };
+    const driver = this.getDriver();
+    const session = driver.session();
+    try {
+      const readResult = await session.readTransaction((tx) =>
+        tx.run(getAttendanceOfConnectionQuery, params)
+      );
+      const results: EventModel[] = [];
+      readResult.records.forEach((record) => {
+        const event = record.get("event").properties;
+        event.attendanceStatus = (record.get("status") ||
+          1) as AttendanceStatus;
+        event.eventDate = moment(event.eventDate);
+        results.push(record.get("event").properties);
+      });
+
+      const sortedResults = Helper.sortByDate(results, "eventDate", "desc");
+      //console.log(sortedResults);
+
+      return sortedResults;
+    } catch (error) {
+      console.error("Something went wrong: ", error);
+    } finally {
+      await session.close();
+    }
+    await driver.close();
+  }
+
+  public async getInvitations(userId: string) {
+    const getAttendanceOfConnectionQuery = `MATCH (p:Person {userId:$userId})-[att:ATTENDED]->(e)  RETURN att.status AS status, e AS event`;
+    const params = { userId: userId };
     const driver = this.getDriver();
     const session = driver.session();
     try {

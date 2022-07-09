@@ -49,7 +49,15 @@ export class PolarChartComponent implements AfterViewInit {
         labels: labels,
         datasets: [
           {
-            backgroundColor: ["#2ecc71", "yellow", "#3498db"],
+            backgroundColor: [
+              "#e60049",
+              "#0bb4ff",
+              "#50e991",
+              "#e6d800",
+              "#9b19f5",
+              "#ffa300",
+              "#dc0ab4",
+            ],
             data: data,
           },
         ],

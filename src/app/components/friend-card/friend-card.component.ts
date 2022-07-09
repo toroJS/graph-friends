@@ -58,17 +58,21 @@ export class FriendCardComponent implements OnInit {
       this.friend.userId
     );
     console.log("events attended");
+    console.log(this.friend.friendSince);
 
     console.log(this.friend.eventsAttended);
+    const pastEvents = this.friend.eventsAttended?.filter((e) => {
+      console.log(e);
+      console.log(Helper.isBeforeNow(e.eventDate));
+      return Helper.isBeforeNow(e.eventDate);
+    });
 
     const lastEventDate =
-      this.friend.eventsAttended?.length > 0
-        ? this.friend.eventsAttended.filter((e) => {
-            console.log(e);
-            console.log(Helper.isBeforeNow(e.eventDate));
-            return Helper.isBeforeNow(e.eventDate);
-          })[0]?.eventDate
+      pastEvents?.length > 0
+        ? pastEvents[0].eventDate
         : this.friend.friendSince;
+    console.log(lastEventDate);
+
     this.friend.connectionState = this.userService.getConnectionState(
       this.friend.intFreq,
       lastEventDate

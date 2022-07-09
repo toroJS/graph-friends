@@ -1,33 +1,39 @@
-<ng-container>
-  <ion-header class="ion-no-border">
-    <ion-toolbar>
-      <ion-buttons slot="start">
-        <ion-back-button></ion-back-button>
-      </ion-buttons>
-      <ion-title class="txt-light-color">My Events</ion-title>
-    </ion-toolbar>
-  </ion-header>
-  <ion-content class="connection-content">
-    <ion-card>
-      <ion-list>
-        <ion-item
-          *ngFor="let event of events$ | async"
-          (click)="presentEventDetail(event)"
-        >
-          <ion-avatar slot="start">
-            <img [src]="(event.image | async) || './avatar-finn.png'" />
-          </ion-avatar>
-          <ion-label>
-            <h3 class="txt-light-color">{{ event.eventName }}</h3>
-            <p>{{ event.eventType }}</p>
-          </ion-label>
+<ion-content class="connection-content">
+  <ion-card>
+    <ion-list>
+      <ion-item
+        *ngFor="let event of events$ | async"
+        (click)="presentEventDetail(event)"
+        [color]="
+          event.eventDateStatus === EventDateStatus.present ? 'medium' : ''
+        "
+        [class.half-opacity]="event.eventDateStatus === EventDateStatus.past"
+      >
+        <ion-avatar slot="start">
+          <img [src]="(event.image | async) || './avatar-finn.png'" />
+        </ion-avatar>
+        <ion-label>
+          <h3 class="txt-light-color">{{ event.eventName }}</h3>
+          <p>{{ event.eventType }}</p>
+        </ion-label>
+        <div style="display: flex; flex-direction: column">
+          <span
+            class="ion-text-center txt-light-color"
+            style="font-size: 14px; margin-bottom: 2px"
+            >Date</span
+          >
           <ion-badge
-            [color]="event.pastEvent ? 'warning' : 'primary'"
+            [color]="
+              event.eventDateStatus === EventDateStatus.past ||
+              event.eventDateStatus === EventDateStatus.present
+                ? 'dark'
+                : 'primary'
+            "
             slot="end"
             >{{ event.eventDate.format("DD.M.YY") }}</ion-badge
           >
-        </ion-item>
-      </ion-list>
-    </ion-card>
-  </ion-content>
-</ng-container>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+</ion-content>

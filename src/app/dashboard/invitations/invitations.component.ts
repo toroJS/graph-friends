@@ -3,23 +3,27 @@ import { ActivatedRoute, Params, Router } from "@angular/router";
 import { ModalController } from "@ionic/angular";
 import * as moment from "moment";
 import { Subject } from "rxjs";
-import { filter, map } from "rxjs/operators";
-import { EventDateStatus, UserModel } from "src/app/models/types";
+import { filter, map, takeUntil } from "rxjs/operators";
+import {
+  AttendanceStatus,
+  EventDateStatus,
+  UserModel,
+} from "src/app/models/types";
 import { Neo4jAuraService } from "src/app/neo4j-aura.service";
 import { EventsService } from "src/app/services/events.service";
 import { StorageService } from "src/app/services/storage.service";
 import { UserService } from "src/app/services/user.service";
-import { ActivityModalComponent } from "../modals/activity-modal/activity-modal.component";
+import { InvitationsModalComponent } from "../modals/invitations-modal/invitations-modal.component";
 
 @Component({
-  selector: "app-activity",
-  templateUrl: "./activity.component.html",
-  styleUrls: ["./activity.component.scss"],
+  selector: "app-invitations",
+  templateUrl: "./invitations.component.html",
+  styleUrls: ["./invitations.component.scss"],
 })
-export class ActivityComponent implements OnInit, OnDestroy {
+export class InvitationsComponent implements OnInit, OnDestroy {
+  public EventDateStatus = EventDateStatus;
   destroy$: Subject<boolean> = new Subject<boolean>();
-  conections$ = this.userService.conections$;
-  events$ = this.userService.createdEvents$.pipe(
+  invitations$ = this.userService.invitations$.pipe(
     filter((e) => e !== null),
     map((events) => {
       console.log(events);
@@ -35,16 +39,16 @@ export class ActivityComponent implements OnInit, OnDestroy {
         } else {
           element.eventDateStatus = EventDateStatus.future;
         }
-
-        // element.pastEvent = dDiff > 0 ? true : false;
         if (element.eventImageSrc)
           element.image = await this.storage.getImage(element.eventImageSrc);
       });
       return events;
     })
   );
+  conections$ = this.userService.conections$;
+
   public user: UserModel;
-  public EventDateStatus = EventDateStatus;
+  public AttendanceStatus = AttendanceStatus;
 
   constructor(
     private userService: UserService,
@@ -55,10 +59,15 @@ export class ActivityComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.userService.user$
-      .pipe(filter((user) => user !== null))
+      .pipe(filter((user) => user !== null, takeUntil(this.destroy$)))
       .subscribe(async (user) => {
         this.user = user;
-        this.userService.getAllCreatedEvents(this.user.userId);
+        if (!this.userService.invitations$.getValue()) {
+          console.log("get users ///////////////////");
+
+          this.userService.getInvitations(user.userId);
+        }
+        //this.userService.getAllCreatedEvents(this.user.userId);
       });
   }
 
@@ -66,9 +75,10 @@ export class ActivityComponent implements OnInit, OnDestroy {
 
   async presentEventDetail(event: any) {
     const modal = await this.modalController.create({
-      component: ActivityModalComponent,
+      component: InvitationsModalComponent,
       componentProps: {
         event: event,
+        userId: this.user.userId,
       },
     });
 

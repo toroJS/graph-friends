@@ -12,32 +12,6 @@
   <ion-content class="connection-content">
     <ion-card>
       <ion-item>
-        <ion-label
-          ><ion-label class="txt-light-color">
-            Goal Interaction frequency: </ion-label
-          ><ion-badge color="primary">{{
-            formatGoalInteraction(goalInteraction)
-          }}</ion-badge></ion-label
-        >
-        <ion-select
-          [(ngModel)]="goalInteraction"
-          (ionChange)="changeIntercationFreq()"
-          interface="action-sheet"
-        >
-          <ion-select-option class="txt-light-color" value="1">
-            Daily
-          </ion-select-option>
-          <ion-select-option class="txt-light-color" value="7"
-            >Weekly</ion-select-option
-          >
-          <ion-select-option class="txt-light-color" value="30"
-            >Monthly</ion-select-option
-          >
-        </ion-select>
-      </ion-item>
-    </ion-card>
-    <ion-card>
-      <ion-item>
         <ion-label class="txt-light-color">Friendship State:</ion-label>
 
         <div class="status-container">
@@ -64,6 +38,46 @@
     </ion-card>
     <ion-card>
       <ion-item>
+        <ion-label class="txt-light-color">
+          Goal Interaction frequency:
+        </ion-label>
+      </ion-item>
+      <ion-item class="ion-justify-content-around">
+        <ion-row style="width: 100%" class="ion-justify-content-around">
+          <ion-col>
+            <ion-chip
+              [outline]="this.goalInteraction === IntFreq.Daily"
+              [color]="this.goalInteraction === IntFreq.Daily ? 'success' : ''"
+              (click)="changeIntercationFreq(IntFreq.Daily)"
+            >
+              <ion-label>Daily</ion-label>
+            </ion-chip>
+          </ion-col>
+          <ion-col>
+            <ion-chip
+              [outline]="this.goalInteraction === IntFreq.Weekly"
+              [color]="this.goalInteraction === IntFreq.Weekly ? 'success' : ''"
+              (click)="changeIntercationFreq(IntFreq.Weekly)"
+            >
+              <ion-label>Weekly</ion-label>
+            </ion-chip>
+          </ion-col>
+          <ion-col>
+            <ion-chip
+              [outline]="this.goalInteraction === IntFreq.Monthly"
+              [color]="
+                this.goalInteraction === IntFreq.Monthly ? 'success' : ''
+              "
+              (click)="changeIntercationFreq(IntFreq.Monthly)"
+            >
+              <ion-label>Monthly</ion-label>
+            </ion-chip>
+          </ion-col>
+        </ion-row>
+      </ion-item>
+    </ion-card>
+    <ion-card>
+      <ion-item>
         <ion-label class="txt-light-color"> Events </ion-label>
         <ion-button
           class="txt-light-color"
@@ -80,6 +94,10 @@
               ? selectedConnection.eventsAttended
               : (selectedConnection.eventsAttended | slice: 0:3)
           "
+          [color]="
+            event.eventDateStatus === EventDateStatus.present ? 'medium' : ''
+          "
+          [class.half-opacity]="event.eventDateStatus === EventDateStatus.past"
         >
           <ion-avatar slot="start">
             <img [src]="event.image | async" />
@@ -87,13 +105,45 @@
           <ion-label>
             <h3 class="txt-light-color">{{ event.eventName }}</h3>
             <p>{{ event.eventType }}</p>
+            <container-element [ngSwitch]="event.attendanceStatus">
+              <!-- the same view can be shown in more than one case -->
+              <ion-badge
+                *ngSwitchCase="AttendanceStatus.invited"
+                color="primary"
+                slot="end"
+                >Invited</ion-badge
+              >
+              <ion-badge
+                *ngSwitchCase="AttendanceStatus.confirmed"
+                color="success"
+                slot="end"
+                >Attending</ion-badge
+              >
+              <ion-badge
+                *ngSwitchCase="AttendanceStatus.declined"
+                color="danger"
+                slot="end"
+                >Not Attending</ion-badge
+              >
+            </container-element>
           </ion-label>
-
-          <ion-badge
-            [color]="event.pastEvent ? 'warning' : 'primary'"
-            slot="end"
-            >{{ event.eventDate.format("DD.M.YY") }}</ion-badge
-          >
+          <div style="display: flex; flex-direction: column">
+            <span
+              class="ion-text-center txt-light-color"
+              style="font-size: 14px; margin-bottom: 2px"
+              >Date</span
+            >
+            <ion-badge
+              [color]="
+                event.eventDateStatus === EventDateStatus.past ||
+                event.eventDateStatus === EventDateStatus.present
+                  ? 'dark'
+                  : 'primary'
+              "
+              slot="end"
+              >{{ event.eventDate.format("DD.M.YY") }}</ion-badge
+            >
+          </div>
         </ion-item>
         <ion-item *ngIf="selectedConnection?.eventsAttended?.length < 1">
           No Events yet. Maybe you could plan something with this person.
