@@ -1,14 +1,14 @@
 {
   "targets": {
-    "ionic5-firebase-authentication": {
+    "graph-friends": {
       "hosting": {
         "app": [
-          "ionic5-firebase-authentication"
+          "graph-friends"
         ]
       }
     }
   },
   "projects": {
-    "demo": "ionic5-firebase-authentication"
+    "demo": "graph-friends"
   }
 }
