@@ -10,7 +10,7 @@
 ## npm start
 ```
 
-##User demo
+##Demo Account
 
 ```
 ## email login with user:

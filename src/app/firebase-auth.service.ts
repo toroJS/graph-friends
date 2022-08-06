@@ -127,13 +127,13 @@ export class FirebaseAuthService {
         provider.addScope(scope);
       });
     }
-
-    if (this.platform.is("desktop")) {
-      return this.angularFireAuth.signInWithPopup(provider);
-    } else {
-      // web but not desktop, for example mobile PWA
-      return this.angularFireAuth.signInWithRedirect(provider);
-    }
+    return this.angularFireAuth.signInWithPopup(provider);
+    // if (this.platform.is("desktop")) {
+    //   return this.angularFireAuth.signInWithPopup(provider);
+    // } else {
+    //   // web but not desktop, for example mobile PWA
+    //   return this.angularFireAuth.signInWithRedirect(provider);
+    // }
   }
 
   signInWithFacebook() {
