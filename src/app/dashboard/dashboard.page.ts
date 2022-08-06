@@ -47,11 +47,8 @@ export class DashboardPage implements OnInit, OnDestroy {
       )
       .subscribe((user) => {
         this.user = user;
-        console.log("behavior log");
 
         if (!this.userService.conections$.getValue()) {
-          console.log("get users ///////////////////");
-
           this.userService.getAllConections(user.userId);
         }
       });

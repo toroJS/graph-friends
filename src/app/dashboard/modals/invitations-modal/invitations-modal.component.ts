@@ -16,9 +16,7 @@ export class InvitationsModalComponent implements OnInit {
   @Input() event: any;
   @Input() userId: any;
   public AttendanceStatus = AttendanceStatus;
-  ngOnInit() {
-    console.log(this.event);
-  }
+  ngOnInit() {}
 
   public closeModal() {
     this.modalController.dismiss();

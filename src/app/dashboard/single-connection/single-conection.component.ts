@@ -41,8 +41,6 @@ export class SingleConectionComponent implements OnInit, OnDestroy {
     this.userService.user$
       .pipe(filter((user) => user !== null))
       .subscribe((user) => {
-        console.log(user);
-
         this.user = user;
         this.route.params.subscribe((params: Params) => {
           const connectionUserId = params["connectionUserId"];
@@ -89,8 +87,6 @@ export class SingleConectionComponent implements OnInit, OnDestroy {
 
               const pastEvents = this.selectedConnection.eventsAttended?.filter(
                 (e) => {
-                  console.log(e);
-                  console.log(Helper.isBeforeNow(e.eventDate));
                   return Helper.isBeforeNow(e.eventDate);
                 }
               );
@@ -120,7 +116,6 @@ export class SingleConectionComponent implements OnInit, OnDestroy {
   }
 
   public changeIntercationFreq(intFreq) {
-    console.log("change int freq");
     this.selectedConnection.intFreq = intFreq;
     this.goalInteraction = intFreq;
     this.db.changeInteractionFreq(
@@ -129,7 +124,6 @@ export class SingleConectionComponent implements OnInit, OnDestroy {
       intFreq
     );
 
-    console.log(intFreq);
     this.userService.getAllConections(this.user.userId);
   }
 

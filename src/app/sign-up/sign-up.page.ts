@@ -79,8 +79,6 @@ export class SignUpPage {
             this.neo4jDb.createUser(newUser);
           }
 
-          console.log("redirect");
-
           this.redirectLoggedUserToProfilePage();
         } else if (result.error) {
           this.submitError = result.error;
@@ -106,8 +104,6 @@ export class SignUpPage {
       )
       .then(async (res) => {
         const user = res.user;
-        console.log(user);
-        console.log(user.email);
 
         const newUser: UserModel = {
           userId: user.uid,
@@ -143,7 +139,7 @@ export class SignUpPage {
       })
       .catch((error) => {
         // Handle Errors here.
-        console.log(error);
+        console.error(error);
       });
   }
 
@@ -173,7 +169,7 @@ export class SignUpPage {
       })
       .catch((error) => {
         // Handle Errors here.
-        console.log(error);
+        console.error(error);
       });
   }
 
@@ -193,7 +189,7 @@ export class SignUpPage {
       })
       .catch((error) => {
         // Handle Errors here.
-        console.log(error);
+        console.error(error);
       });
   }
 }

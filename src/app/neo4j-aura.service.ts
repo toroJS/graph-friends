@@ -25,7 +25,6 @@ export class Neo4jAuraService {
   constructor() {}
 
   public async createUser(user: UserModel) {
-    console.log("Create User");
     const createUserQuery = `CREATE (p1:Person{userId:$userId, createdAt:$createdAt, userName:$userName, avatarUrl:$avatarUrl, email:$email})`;
     this.write(createUserQuery, user);
   }
@@ -65,11 +64,10 @@ export class Neo4jAuraService {
     };
     this.write(createConectionQuery, params);
   }
-  ////--------------------------------------------------------------
 
   public async getAllConections(userId) {
     const getAllConectionsQuery = `MATCH (p:Person {userId:$userId})-[rel:BEFRIENDED]->(f:Person) RETURN rel.intFreq AS intFreq, rel.since AS since, f AS conections`;
-    //MATCH (p:Person {userId:'rBM5YviVvBTYlno9U363bDuABpk1'})-[rel:BEFRIENDED]->(a:Person) RETURN rel.intFreq AS freq, p AS person
+
     const params = { userId: userId };
 
     const driver = this.getDriver();
@@ -81,8 +79,6 @@ export class Neo4jAuraService {
       );
       const results: UserModel[] = [];
       readResult.records.forEach((record) => {
-        //console.log(Date.parse((record.get("conections").properties).createdAt));
-
         results.push({
           ...record.get("conections").properties,
           ...{
@@ -91,8 +87,6 @@ export class Neo4jAuraService {
           },
         });
       });
-      console.log("results");
-      console.log(results);
 
       return results;
     } catch (error) {
@@ -122,7 +116,6 @@ export class Neo4jAuraService {
   }
 
   public async createEvent(userId: string, event: DBEventModel) {
-    console.log("Create Event");
     const createEventQuery = ` MATCH(p: Person { userId:$userId }) CREATE(e:Event {eventId:$eventId, createdBy:$userId, eventType:$eventType, eventDate:$eventDate, eventName:$eventName, eventDescription:$eventDescription, eventImageSrc:$eventImageSrc}) MERGE(p)-[:CREATED]->(e)
         `;
     const params = { userId: userId, ...event };
@@ -175,22 +168,6 @@ export class Neo4jAuraService {
     await driver.close();
   }
 
-  //RETURN rel.intFreq AS intFreq, rel.since AS since, f AS conections
-  //   const readResult = await session.readTransaction((tx) =>
-  //   tx.run(getAllConectionsQuery, params)
-  // );
-  // const results: UserModel[] = [];
-  // readResult.records.forEach((record) => {
-  //   //console.log(Date.parse((record.get("conections").properties).createdAt));
-
-  //   results.push({
-  //     ...record.get("conections").properties,
-  //     ...{
-  //       intFreq: record.get("intFreq"),
-  //       friendSince: moment(record.get("since")),
-  //     },
-  //   });
-  // });
   public async getAttendanceOfConnection(
     userId: string,
     conectionUserId: string
@@ -213,7 +190,6 @@ export class Neo4jAuraService {
       });
 
       const sortedResults = Helper.sortByDate(results, "eventDate", "desc");
-      //console.log(sortedResults);
 
       return sortedResults;
     } catch (error) {
@@ -243,7 +219,6 @@ export class Neo4jAuraService {
       });
 
       const sortedResults = Helper.sortByDate(results, "eventDate", "desc");
-      //console.log(sortedResults);
 
       return sortedResults;
     } catch (error) {
@@ -255,7 +230,6 @@ export class Neo4jAuraService {
   }
 
   public async getUserById(userId: string) {
-    //console.log("Get User by Id");
     const driver = this.getDriver();
     const session = driver.session();
     try {
@@ -278,7 +252,6 @@ export class Neo4jAuraService {
   }
 
   public async getUserByEmail(email: string) {
-    //console.log("Get User by Id");
     const driver = this.getDriver();
     const session = driver.session();
     try {
@@ -300,10 +273,7 @@ export class Neo4jAuraService {
     await driver.close();
   }
 
-  //DB Methods
-
   private async write(writeQuery: string, params?: any) {
-    console.log("WRITE query");
     const driver = this.getDriver();
     const session = driver.session();
     try {

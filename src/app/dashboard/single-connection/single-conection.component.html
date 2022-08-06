@@ -13,7 +13,9 @@
     <ion-card>
       <ion-item>
         <ion-label class="txt-light-color">Friendship State:</ion-label>
+      </ion-item>
 
+      <ion-item>
         <div class="status-container">
           <img
             class="emogi"
@@ -39,12 +41,15 @@
     <ion-card>
       <ion-item>
         <ion-label class="txt-light-color">
-          Goal Interaction frequency:
+          Interaction frequency goal:
         </ion-label>
       </ion-item>
-      <ion-item class="ion-justify-content-around">
-        <ion-row style="width: 100%" class="ion-justify-content-around">
-          <ion-col>
+      <ion-item class="int-freq">
+        <ion-row
+          style="width: 100%; padding: 0px"
+          class="ion-justify-content-evenly"
+        >
+          <ion-col style="text-align: right" size="4">
             <ion-chip
               [outline]="this.goalInteraction === IntFreq.Daily"
               [color]="this.goalInteraction === IntFreq.Daily ? 'success' : ''"
@@ -53,7 +58,7 @@
               <ion-label>Daily</ion-label>
             </ion-chip>
           </ion-col>
-          <ion-col>
+          <ion-col style="text-align: middle" size="4">
             <ion-chip
               [outline]="this.goalInteraction === IntFreq.Weekly"
               [color]="this.goalInteraction === IntFreq.Weekly ? 'success' : ''"
@@ -62,7 +67,7 @@
               <ion-label>Weekly</ion-label>
             </ion-chip>
           </ion-col>
-          <ion-col>
+          <ion-col style="text-align: left" size="4">
             <ion-chip
               [outline]="this.goalInteraction === IntFreq.Monthly"
               [color]="

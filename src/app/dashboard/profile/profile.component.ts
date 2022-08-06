@@ -16,16 +16,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   conections$ = this.userService.conections$;
   events$ = this.userService.createdEvents$;
-  // eventsFilter$ = this.userService.createdEvents$.pipe(
-  //   map((e: any) => {
-  //     e?.forEach((element) => {
-  //       console.log(this.selectedMonth);
 
-  //       console.log(element.eventDate);
-  //       console.log(element.eventDate.isSame(element.eventDate, "month"));
-  //     });
-  //   })
-  // );
   selectedfirstMonth$ = new BehaviorSubject(null);
   selectedsecondMonth$ = new BehaviorSubject(null);
   filterFirstMonth$ = this.selectedfirstMonth$.pipe(

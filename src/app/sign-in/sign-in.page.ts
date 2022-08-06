@@ -80,8 +80,6 @@ export class SignInPage {
             this.neo4jDb.createUser(newUser);
           }
 
-          console.log("redirect");
-
           this.redirectLoggedUserToProfilePage();
         } else if (result.error) {
           this.submitError = result.error;
@@ -89,11 +87,7 @@ export class SignInPage {
       });
   }
 
-  // Once the auth provider finished the authentication flow, and the auth redirect completes,
-  // redirect the user to the profile page
   redirectLoggedUserToProfilePage() {
-    // As we are calling the Angular router navigation inside a subscribe method, the navigation will be triggered outside Angular zone.
-    // That's why we need to wrap the router navigation call inside an ngZone wrapper
     this.ngZone.run(() => {
       this.router.navigate(["pages/dashboard"]);
     });
@@ -130,7 +124,7 @@ export class SignInPage {
       })
       .catch((error) => {
         // Handle Errors here.
-        console.log(error);
+        console.error(error);
       });
   }
 
@@ -150,7 +144,7 @@ export class SignInPage {
       })
       .catch((error) => {
         // Handle Errors here.
-        console.log(error);
+        console.error(error);
       });
   }
 
@@ -170,7 +164,7 @@ export class SignInPage {
       })
       .catch((error) => {
         // Handle Errors here.
-        console.log(error);
+        console.error(error);
       });
   }
 }

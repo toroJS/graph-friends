@@ -52,25 +52,54 @@
       Please provide valid email id.
     </span>
     <ion-item>
-      <ion-label class="txt-light-color"
-        >Desired interaction frequency</ion-label
-      >
-      <ion-select
-        formControlName="intFreq"
-        value="intFreq"
-        interface="action-sheet"
-      >
-        <ion-select-option class="txt-light-color" value="1">
-          Daily
-        </ion-select-option>
-        <ion-select-option class="txt-light-color" value="7"
-          >Weekly</ion-select-option
-        >
-        <ion-select-option class="txt-light-color" value="30"
-          >Monthly</ion-select-option
-        >
-      </ion-select>
+      <ion-label class="txt-light-color">
+        Goal Interaction frequency:
+      </ion-label>
     </ion-item>
+    <ion-item class="ion-justify-content-around">
+      <ion-row style="width: 100%" class="ion-justify-content-around">
+        <ion-col style="text-align: right">
+          <ion-chip
+            [outline]="friendForm.controls.intFreq.value === IntFreq.Daily"
+            [color]="
+              friendForm.controls.intFreq.value === IntFreq.Daily
+                ? 'success'
+                : ''
+            "
+            (click)="friendForm.controls.intFreq.setValue(IntFreq.Daily)"
+          >
+            <ion-label>Daily</ion-label>
+          </ion-chip>
+        </ion-col>
+        <ion-col style="text-align: center">
+          <ion-chip
+            [outline]="friendForm.controls.intFreq.value === IntFreq.Weekly"
+            [color]="
+              friendForm.controls.intFreq.value === IntFreq.Weekly
+                ? 'success'
+                : ''
+            "
+            (click)="friendForm.controls.intFreq.setValue(IntFreq.Weekly)"
+          >
+            <ion-label>Weekly</ion-label>
+          </ion-chip>
+        </ion-col>
+        <ion-col style="text-align: left">
+          <ion-chip
+            [outline]="friendForm.controls.intFreq.value === IntFreq.Monthly"
+            [color]="
+              friendForm.controls.intFreq.value === IntFreq.Monthly
+                ? 'success'
+                : ''
+            "
+            (click)="friendForm.controls.intFreq.setValue(IntFreq.Monthly)"
+          >
+            <ion-label>Monthly</ion-label>
+          </ion-chip>
+        </ion-col>
+      </ion-row>
+    </ion-item>
+
     <span
       class="error ion-padding"
       *ngIf="isSubmitted && errorControl.intFreq.errors?.required"

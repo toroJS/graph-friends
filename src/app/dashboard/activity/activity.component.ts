@@ -22,8 +22,6 @@ export class ActivityComponent implements OnInit, OnDestroy {
   events$ = this.userService.createdEvents$.pipe(
     filter((e) => e !== null),
     map((events) => {
-      console.log(events);
-
       events.forEach(async (element) => {
         const now = moment();
         var dDiff = now.diff(element.eventDate);

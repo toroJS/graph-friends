@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ModalController } from "@ionic/angular";
 
-import { UserModel } from "src/app/models/types";
+import { IntFreq, UserModel } from "src/app/models/types";
 import { Neo4jAuraService } from "src/app/neo4j-aura.service";
 import { v4 as uuidv4 } from "uuid";
 
@@ -19,6 +19,7 @@ export class CreateConnectionModalComponent implements OnInit, OnDestroy {
   private friendsSubscription;
   public friendForm: FormGroup;
   defaultDate = new Date().toISOString();
+  public IntFreq = IntFreq;
   isSubmitted = false;
 
   constructor(
@@ -66,7 +67,6 @@ export class CreateConnectionModalComponent implements OnInit, OnDestroy {
   public async addFriend() {
     this.isSubmitted = true;
     if (!this.friendForm.valid) {
-      console.log("Please provide all the required values!");
       return false;
     } else {
       const { userName, email, intFreq } = this.friendForm.value;
@@ -89,8 +89,6 @@ export class CreateConnectionModalComponent implements OnInit, OnDestroy {
           await this.db.createUser(createFriend);
           this.db.addConection(this.userId, newUserId, intFreq);
         }
-      } else {
-        console.log("already a friend");
       }
     }
   }

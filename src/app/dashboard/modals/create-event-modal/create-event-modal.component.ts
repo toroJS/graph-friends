@@ -81,7 +81,6 @@ export class CreateEventModalComponent {
   async createEvent() {
     this.isSubmitted = true;
     if (!this.createEventForm.valid) {
-      console.log("Please provide all the required values!");
       return false;
     } else {
       this.loading = await this.loadingController.create({

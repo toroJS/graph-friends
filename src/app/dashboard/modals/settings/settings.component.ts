@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup } from "@angular/forms";
+import { Router } from "@angular/router";
 import { LoadingController, ModalController } from "@ionic/angular";
+import { FirebaseAuthService } from "src/app/firebase-auth.service";
 import { UserModel } from "src/app/models/types";
 import { UserService } from "src/app/services/user.service";
 
@@ -23,23 +25,11 @@ export class SettingsComponent implements OnInit {
     private modalController: ModalController,
     private formBuilder: FormBuilder,
     public loadingController: LoadingController,
-    public userService: UserService //private db: Neo4jAuraService, //private storage: StorageService, //private eventsService: EventsService,
+    public userService: UserService,
+    private router: Router,
+    private authService: FirebaseAuthService
   ) {
-    this.settingsForm = this.formBuilder.group({
-      // eventName: ["", [Validators.required, Validators.minLength(2)]],
-      // eventType: ["", [Validators.required]],
-      // email: [
-      //   "",
-      //   [
-      //     Validators.required,
-      //     Validators.pattern("[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,3}$"),
-      //   ],
-      // ],
-      // eventDate: [this.defaultDate],
-      // invitedFriends: [],
-      // eventDescription: [],
-      // mobile: ["", [Validators.required, Validators.pattern("^[0-9]+$")]],
-    });
+    this.settingsForm = this.formBuilder.group({});
   }
 
   async ngOnInit() {
@@ -60,34 +50,27 @@ export class SettingsComponent implements OnInit {
   async saveSettings() {
     this.isSubmitted = true;
     if (!this.settingsForm.valid) {
-      console.log("Please provide all the required values!");
       return false;
     } else {
       this.loading = await this.loadingController.create({
         message: "Please wait...",
       });
       await this.loading.present();
-      // const {
-      //   eventDate,
-      //   eventDescription,
-      //   eventName,
-      //   eventType,
-      //   invitedFriends,
-      // } = this.settingsForm.value;
-
-      // const newEvent = {
-      //   eventId: generatedId,
-      //   eventType: eventType,
-      //   eventDate: eventDate,
-      //   eventName: eventName,
-      //   eventImageSrc: this.file?.name
-      //     ? `events/${generatedId + "/" + this.file.name}`
-      //     : "",
-      //   eventDescription: eventDescription,
-      // };
 
       this.loading.dismiss();
       this.closeModal();
     }
+  }
+
+  signOut() {
+    this.authService.signOut().subscribe(
+      () => {
+        this.router.navigate(["sign-in"]);
+        this.closeModal();
+      },
+      (error) => {
+        console.error("signout error", error);
+      }
+    );
   }
 }

@@ -26,8 +26,6 @@ export class InvitationsComponent implements OnInit, OnDestroy {
   invitations$ = this.userService.invitations$.pipe(
     filter((e) => e !== null),
     map((events) => {
-      console.log(events);
-
       events.forEach(async (element) => {
         const now = moment();
         var dDiff = now.diff(element.eventDate);
@@ -63,8 +61,6 @@ export class InvitationsComponent implements OnInit, OnDestroy {
       .subscribe(async (user) => {
         this.user = user;
         if (!this.userService.invitations$.getValue()) {
-          console.log("get users ///////////////////");
-
           this.userService.getInvitations(user.userId);
         }
         //this.userService.getAllCreatedEvents(this.user.userId);

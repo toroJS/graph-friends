@@ -63,20 +63,6 @@ export class UserService {
 
   public async getAllConections(userId: string) {
     const conections = await this.db.getAllConections(userId);
-    // conections.map(async (connection) => {
-    //   connection.eventsAttended = await this.db.getAttendanceOfConnection(
-    //     userId,
-    //     connection.userId
-    //   );
-    //   connection.connectionState = this.getConnectionState(
-    //     connection.intFreq,
-    //     connection.eventsAttended[0]?.eventDate || connection.friendSince
-    //   );
-    //   connection.connectionStateEmogi = avatarState.get(
-    //     connection.connectionState
-    //   );
-    // });
-    console.log(conections);
 
     this.conections$.next(conections);
   }
@@ -107,8 +93,6 @@ export class UserService {
   }
 
   public selectConnection(connectionUserId: string) {
-    //console.log("triger selection");
-
     this.selectedConnectionId$.next(connectionUserId);
   }
 

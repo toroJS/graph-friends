@@ -5,7 +5,7 @@
   "homepage": "https://ionicthemes.com/",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ionic serve -l",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
@@ -45,6 +45,7 @@
     "@angular/language-service": "~10.2.0",
     "@capacitor/cli": "^2.4.2",
     "@ionic/angular-toolkit": "^2.3.3",
+    "@ionic/lab": "3.2.13",
     "@types/jasmine": "~3.5.0",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^12.11.1",

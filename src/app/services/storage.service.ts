@@ -16,7 +16,7 @@ export class StorageService {
       });
       return await this.storage.ref(path).getDownloadURL();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 }

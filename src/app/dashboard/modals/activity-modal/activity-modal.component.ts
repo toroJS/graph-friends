@@ -9,9 +9,7 @@ import { ModalController } from "@ionic/angular";
 export class ActivityModalComponent implements OnInit {
   constructor(private modalController: ModalController) {}
   @Input() event: any;
-  ngOnInit() {
-    console.log(this.event);
-  }
+  ngOnInit() {}
 
   public closeModal() {
     this.modalController.dismiss();

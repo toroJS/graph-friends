@@ -95,8 +95,6 @@ export class RadarChartComponent implements AfterViewInit {
   getDatasets() {
     this.datasets = [];
     for (const [i, month] of this.monthsEvents.entries()) {
-      console.log(month, i);
-
       const data = this.countEventsAndGetLabelColor(month);
       const monthCount = data.count;
       const labelColors = data.labelColors;

@@ -1,9 +1,9 @@
-<ion-app>
+<ion-app style="padding: 0px">
   <ion-router-outlet></ion-router-outlet>
-  <ion-tabs>
+  <ion-tabs *ngIf="authService.currentUser">
     <ion-tab-bar slot="bottom">
       <ion-tab-button tab="pages/events">
-        <ion-icon name="cafe-outline"></ion-icon>
+        <ion-icon name="cafe-outline" class="txt-light-color"></ion-icon>
         <ion-label class="txt-light-color">My Events</ion-label>
       </ion-tab-button>
       <ion-tab-button tab="pages/dashboard">
