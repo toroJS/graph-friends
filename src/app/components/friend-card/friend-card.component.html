@@ -26,25 +26,14 @@
           justify-content: center;
         "
       >
-        <ion-spinner name="lines"></ion-spinner>
+        <ion-spinner
+          name="loading-spinner"
+          alt="loading-spiner"
+          aria-label="loading-spiner"
+        ></ion-spinner>
       </div>
     </div>
   </container-element>
-
-  <!-- <container-element [ngSwitch]="loading">
-    <div class="status-container" *ngSwitchCase="false">
-      <img
-        class="health-bar"
-        [src]="
-          '../../../assets/health-indicators/' +
-          this.friend.connectionStateEmogi +
-          '.svg'
-        "
-        alt="img"
-      />
-    </div>
-    <ion-spinner *ngSwitchDefault name="lines"></ion-spinner>
-  </container-element> -->
 
   <span class="txt-light-color" style="margin-bottom: 5px; font-size: 0.8em"
     >Interaction Goal:</span

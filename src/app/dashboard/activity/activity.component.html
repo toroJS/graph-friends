@@ -10,7 +10,10 @@
         [class.half-opacity]="event.eventDateStatus === EventDateStatus.past"
       >
         <ion-avatar slot="start">
-          <img [src]="(event.image | async) || './avatar-finn.png'" />
+          <img
+            alt="event-photo"
+            [src]="(event.image | async) || './avatar-finn.png'"
+          />
         </ion-avatar>
         <ion-label>
           <h3 class="txt-light-color">{{ event.eventName }}</h3>

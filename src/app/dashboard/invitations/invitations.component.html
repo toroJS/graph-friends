@@ -10,7 +10,7 @@
           "
           [class.half-opacity]="event.eventDateStatus === EventDateStatus.past"
         >
-          <ion-avatar slot="start">
+          <ion-avatar alt="event-photo" slot="start">
             <img [src]="(event.image | async) || './avatar-finn.png'" />
           </ion-avatar>
           <ion-label>
